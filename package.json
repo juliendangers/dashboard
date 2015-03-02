@@ -16,5 +16,8 @@
     "morgan": "~1.5.1",
     "mysql": "^2.5.5",
     "serve-favicon": "~2.2.0"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5"
   }
 }
