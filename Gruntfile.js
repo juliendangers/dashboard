@@ -1,5 +1,4 @@
 module.exports = function(grunt) {
-
     // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -20,7 +19,10 @@ module.exports = function(grunt) {
                     optimization: 2
                 },
                 files: {
-                    "public/css/main.css": ["public/less/bootstrap/bootstrap.less", "public/less/dashboard.less"] // destination file and source file
+                    "public/css/main.css": [
+                        "public/less/bootstrap/bootstrap.less",
+                        "public/less/dashboard.less"
+                    ]
                 }
             }
         },
@@ -40,5 +42,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Default task(s).
-    grunt.registerTask('default', ['less', 'watch', 'uglify']);
+    grunt.registerTask('default', ['watch', 'less', 'uglify']);
 };
