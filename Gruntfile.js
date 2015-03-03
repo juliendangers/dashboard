@@ -20,7 +20,7 @@ module.exports = function(grunt) {
                     optimization: 2
                 },
                 files: {
-                    "css/main.css": "less/main.less" // destination file and source file
+                    "css/main.css": "less/bootstrap.less" // destination file and source file
                 }
             }
         },
@@ -39,6 +39,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
 
     // Default task(s).
-    grunt.registerTask('default', ['uglify']);
-    grunt.registerTask('default', ['less', 'watch']);
+    grunt.registerTask('default', ['less', 'watch', 'uglify']);
 };
