@@ -20,7 +20,7 @@ module.exports = function(grunt) {
                     optimization: 2
                 },
                 files: {
-                    "css/main.css": "less/bootstrap.less" // destination file and source file
+                    "public/css/main.css": "public/less/bootstrap.less" // destination file and source file
                 }
             }
         },
@@ -35,8 +35,9 @@ module.exports = function(grunt) {
         }
     });
 
-    // Load the plugin that provides the "uglify" task.
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Default task(s).
     grunt.registerTask('default', ['less', 'watch', 'uglify']);
