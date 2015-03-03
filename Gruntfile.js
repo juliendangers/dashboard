@@ -11,6 +11,27 @@ module.exports = function(grunt) {
                 src: 'src/<%= pkg.name %>.js',
                 dest: 'build/<%= pkg.name %>.min.js'
             }
+        },
+        less: {
+            development: {
+                options: {
+                    compress: true,
+                    yuicompress: true,
+                    optimization: 2
+                },
+                files: {
+                    "css/main.css": "less/main.less" // destination file and source file
+                }
+            }
+        },
+        watch: {
+            styles: {
+                files: ['less/**/*.less'], // which files to watch
+                tasks: ['less'],
+                options: {
+                    nospawn: true
+                }
+            }
         }
     });
 
@@ -19,4 +40,5 @@ module.exports = function(grunt) {
 
     // Default task(s).
     grunt.registerTask('default', ['uglify']);
+    grunt.registerTask('default', ['less', 'watch']);
 };
