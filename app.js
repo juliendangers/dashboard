@@ -6,11 +6,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+console.log(io);
 // Route setup
 var routes = require('./routes/index');
 var users = require('./routes/users');
-
-var app = express();
 
 app.engine('ejs', engine);
 
@@ -29,6 +31,13 @@ app.use('/', routes);
 app.use('/users', users);
 
 
+io.on('connection', function(socket){
+    console.log('a user connected');
+    socket.on('disconnect', function(){
+        console.log('user disconnected');
+    });
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -36,14 +45,13 @@ app.use(function(req, res, next) {
   next(err);
 });
 
-// error handlers
 
-// development error handler
-// will print stacktrace
+// error handlers
+// development error handler will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
+    res.render('error.ejs', {
       message: err.message,
       error: err
     });
@@ -54,7 +62,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
-  res.render('error', {
+  res.render('error.ejs', {
     message: err.message,
     error: {}
   });
