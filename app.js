@@ -9,7 +9,7 @@ var bodyParser = require('body-parser');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-console.log(io);
+
 // Route setup
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -76,6 +76,6 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
-var server = app.listen(8080, function () {
+http.listen(8080, "127.0.0.1", function () {
     console.log('Example app listening on port 8080');
 });
