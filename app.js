@@ -18,7 +18,7 @@ app.engine('ejs', engine);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(favicon(__dirname + '/public/images/favicon.ico'));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -60,6 +60,14 @@ app.use(function(err, req, res, next) {
   });
 });
 
-//app.engine('html', require('ejs').renderFile);
+//var cronJob = require('cron').CronJob;
+//new cronJob('* * * * * *', function(){
+//
+//}, null, true, "America/Los_Angeles");
+
 
 module.exports = app;
+
+var server = app.listen(8080, function () {
+    console.log('Example app listening on port 8080');
+});
