@@ -8,7 +8,7 @@
  * Controller of the webApp
  */
 angular.module('dashboardApp')
-  .controller('MainCtrl', function ($scope, c3SimpleService, Chart, Burndown) {
+  .controller('MainCtrl', function ($scope, c3SimpleService, Chart, Burndown, socket) {
         $scope.datachart = Chart.getData();
         $scope.dataTest = Burndown.getData();
 
