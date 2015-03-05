@@ -34,9 +34,6 @@ app.use('/users', users);
 io.on('connection', function(socket) {
     console.log('A user connected');
 
-    mongoDashboard.findAll('');
-    socket.emit('init-all', );
-
     socket.on('disconnect', function(){
         console.log('Client disconnected');
     });
