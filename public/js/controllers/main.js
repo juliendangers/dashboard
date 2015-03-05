@@ -9,43 +9,57 @@
  */
 angular.module('dashboardApp')
   .controller('MainCtrl', function ($scope, c3SimpleService, Chart, Burndown, socket) {
-        $scope.datachart = Chart.getData();
+        //$scope.datachart = Chart.getData();
         $scope.dataTest = Burndown.getData();
+        $scope.datachart = {};
 
         $scope.transform = function(chartId, serie) {
             c3SimpleService['#' + chartId].transform($scope.chartType[serie], serie);
         };
 
-        $scope.chart = {
-            data: {
-                x: 'x',
-                json: $scope.datachart,
-                type: 'bar',
-                colors: {
-                    'UX': '#000',
-                    'DEV': '#69BE00',
-                    'LIVE': '#53A9FF',
-                    'TOOLS': '#931C9A'
+        var setChart = function() {
+            return $scope.chart = {
+                data: {
+                    x: 'x',
+                    json: $scope.datachart,
+                    type: 'bar',
+                    colors: {
+                        'UX': '#000',
+                        'DEV': '#69BE00',
+                        'LIVE': '#53A9FF',
+                        'TOOLS': '#931C9A'
+                    },
+                    columns: []
                 },
-                columns: []
-            },
-            bar: {
-                width: {
-                    ratio: 0.5
-                }
-            },
-            axis: {
-                x: {
-                    type: 'category'
+                bar: {
+                    width: {
+                        ratio: 0.5
+                    }
                 },
-                y: {
-                    label: {
-                        text: 'issues',
-                        position: 'outer-middle'
+                axis: {
+                    x: {
+                        type: 'category'
+                    },
+                    y: {
+                        label: {
+                            text: 'issues',
+                            position: 'outer-middle'
+                        }
                     }
                 }
-            }
+            };
         };
+
+        socket.on('init-all', function (data) {
+            $scope.datachart = data;
+        });
+
+        $scope.$watch('datachart', function(newSeries, oldSeries) {
+            c3.generate(setChart());
+        });
+
+        setChart();
+
 
         $scope.burndown = {
             data: {
@@ -79,3 +93,4 @@ angular.module('dashboardApp')
             }
         }
     });
+
