@@ -6,17 +6,17 @@
 		<div class="row">
 			<div class="six columns">
 				<div class="block">
-					<div class="hd">{{ awesomeThings }}</div>
+					<div class="hd">Sprint burndown charts</div>
 					<div class="bd">
-						<div id="burndown"></div>
+						<c3-simple id="burndown" config="burndown"></c3-simple>
 					</div>
 				</div>
 			</div>
 			<div class="six columns">
 				<div class="block">
-					<div class="hd">{{ awesomeThings }}</div>
+					<div class="hd">Issues charts</div>
 					<div class="bd">
-						<div id="chart"></div>
+						<c3-simple id="chart" config="chart"></c3-simple>
 					</div>
 				</div>
 			</div>
