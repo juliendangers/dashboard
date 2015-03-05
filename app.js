@@ -6,10 +6,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var env = require('node-env-file');
-var mongoDashboard = require('./modules/dashboardDb');
 
 env(__dirname + '/.env');
-console.log(process.env.JIRA_PASSWORD);
 
 var app = express();
 var http = require('http').Server(app);
@@ -39,25 +37,51 @@ app.use('/users', users);
 
 io.on('connection', function(socket) {
     console.log('A user connected');
-
     socket.emit('init-all', {
-            "x" : ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY','DONE'],
+            "chart": {
+                "x": ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY', 'DONE'],
+                'UX'   : [50, 2, 50, 8, 25],
+                'DEV'  : [30, 10, 5, 1, 4],
+                'LIVE' : [3, 5, 1, 0, 3],
+                'TOOLS': [8, 1, 0, 1, 2]
+            },
+            "burndown": {
+                "x":[
+                    "-",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday"
+                ],
+                "base":[350,311,272,233,194,156,117,78,39,0],
+                "UX":[350,345,344],
+                "DEV":[350,340,306],
+                "LIVE":[350,350,259],
+                "TOOLS":[350,305,284]
+            },
+            "bugs": {
+                "number" : 92,
+                "date": "2014-02-05"
+            }
+        }
+    );
 
-            'UX'   : [ 10, 2, 4, 8, 25],
-            'DEV'  : [30, 10, 5, 1, 4],
-            'LIVE' : [3, 5, 1, 0, 3],
-            'TOOLS': [8, 1, 0, 1, 2]
-    });
-
-    socket.on('disconnect', function(){
+    socket.on('disconnect', function () {
         console.log('Client disconnected');
     });
 });
 
 //
-var cronJob = require('cron').CronJob;
-new cronJob('00 00 09 * * 1-5', function(data) {
+var CronJob = require('cron').CronJob;
+new CronJob('* 54 22 * * 1-5', function() {
+    console.log('test');
     issues.getBugIssues(function(data){
+        console.log(data);
         dashboardDb.insert('bug-count-issues', data);
     })
 }, null, true, "Europe/Paris");
