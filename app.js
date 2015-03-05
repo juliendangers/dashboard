@@ -5,6 +5,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var mongoDashboard = require('../modules/mongoDashboard');
 
 var app = express();
 var http = require('http').Server(app);
@@ -32,6 +33,9 @@ app.use('/users', users);
 
 io.on('connection', function(socket) {
     console.log('A user connected');
+
+    mongoDashboard.findAll('');
+    socket.emit('init-all', );
 
     socket.on('disconnect', function(){
         console.log('Client disconnected');
