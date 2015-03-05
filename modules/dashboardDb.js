@@ -22,45 +22,58 @@ var insert = function(collectionName, array, callback) {
 };
 
 var find = function(collectionName, criteria, callback) {
-    // Get the documents collection
-    var collection = db.collection(collectionName);
+    MongoClient.connect(url, function(err, db) {
+        assert.equal(null, err);
 
-    // Find some documents
-    collection.find(criteria).toArray(function(err, result) {
-        if (callback) {
-            callback(result);
-        }
+        // Get the documents collection
+        var collection = db.collection(collectionName);
+
+        // Find some documents
+        collection.find(criteria).toArray(function(err, result) {
+            if (callback) {
+                callback(result);
+            }
+        });
     });
 };
 
 var findAll = function(collectionName, callback) {
-    // Get the documents collection
-    var collection = db.collection(collectionName);
-
-    // Find some documents
-    collection.find({}).toArray(function(err, result) {
+    MongoClient.connect(url, function(err, db) {
         assert.equal(null, err);
 
-        if (callback) {
-            callback(result);
-        }
+        // Get the documents collection
+        var collection = db.collection(collectionName);
+
+        // Find some documents
+        collection.find({}).toArray(function(err, result) {
+            assert.equal(null, err);
+
+            if (callback) {
+                callback(result);
+            }
+        });
     });
 };
 
 var removeAll = function(collectionName, callback) {
-    // Get the documents collection
-    var collection = db.collection(collectionName);
-
-    // Find some documents
-    collection.find({}).toArray(function(err, result) {
+    MongoClient.connect(url, function(err, db) {
         assert.equal(null, err);
 
-        if (callback) {
-            callback(result);
-        }
+        // Get the documents collection
+        var collection = db.collection(collectionName);
+
+        // Find some documents
+        collection.find({}).toArray(function(err, result) {
+            assert.equal(null, err);
+
+            if (callback) {
+                callback(result);
+            }
+        });
     });
 };
 
 module.exports.insert = insert;
 module.exports.findAll = findAll;
 module.exports.removeAll = removeAll;
+module.exports.find = find;

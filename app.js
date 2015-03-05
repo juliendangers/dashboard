@@ -37,53 +37,55 @@ app.use('/users', users);
 
 io.on('connection', function(socket) {
     console.log('A user connected');
-    socket.emit('init-all', {
-            "chart": {
-                "x": ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY', 'DONE'],
-                'UX'   : [50, 2, 50, 8, 25],
-                'DEV'  : [30, 10, 5, 1, 4],
-                'LIVE' : [3, 5, 1, 0, 3],
-                'TOOLS': [8, 1, 0, 1, 2]
-            },
-            "burndown": {
-                "x":[
-                    "-",
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Monday",
-                    "Tuesday",
-                    "Wednesday",
-                    "Thursday",
-                    "Friday"
-                ],
-                "base":[350,311,272,233,194,156,117,78,39,0],
-                "UX":[350,345,344],
-                "DEV":[350,340,306],
-                "LIVE":[350,350,259],
-                "TOOLS":[350,305,284]
-            },
-            "bugs": {
-                "number" : 92,
-                "date": "2014-02-05"
+
+    var bugsCount = 0;
+    dashboardDb.find('bug-count-issues', {}, function(bugsCount) {
+        bugsCount = bugsCount[0];
+
+        socket.emit('init-all', {
+                "chart": {
+                    "x": ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY', 'DONE'],
+                    'UX'   : [50, 2, 50, 8, 25],
+                    'DEV'  : [30, 10, 5, 1, 4],
+                    'LIVE' : [3, 5, 1, 0, 3],
+                    'TOOLS': [8, 1, 0, 1, 2]
+                },
+                "burndown": {
+                    "x":[
+                        "-",
+                        "Monday",
+                        "Tuesday",
+                        "Wednesday",
+                        "Thursday",
+                        "Monday",
+                        "Tuesday",
+                        "Wednesday",
+                        "Thursday",
+                        "Friday"
+                    ],
+                    "base":[350,311,272,233,194,156,117,78,39,0],
+                    "UX":[350,345,344],
+                    "DEV":[350,340,306],
+                    "LIVE":[350,350,259],
+                    "TOOLS":[350,305,284]
+                },
+                "bugs": bugsCount
             }
-        }
-    );
+        );
+    });
 
     socket.on('disconnect', function () {
         console.log('Client disconnected');
     });
 });
 
-//
 var CronJob = require('cron').CronJob;
-new CronJob('* 54 22 * * 1-5', function() {
+new CronJob('* * 23 * * 1-5', function() {
     console.log('test');
     issues.getBugIssues(function(data){
-        console.log(data);
         dashboardDb.insert('bug-count-issues', data);
-    })
+        io.sockets.emit('init-bugs', data);
+    });
 }, null, true, "Europe/Paris");
 
 
