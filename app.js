@@ -30,9 +30,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 
+io.on('connection', function(socket) {
+    console.log('A user connected');
 
-io.on('connection', function(socket){
-    console.log('a user connected');
     socket.on('disconnect', function(){
         console.log('user disconnected');
     });
@@ -70,7 +70,7 @@ app.use(function(err, req, res, next) {
 
 //var cronJob = require('cron').CronJob;
 //new cronJob('* * * * * *', function(){
-//
+
 //}, null, true, "America/Los_Angeles");
 
 
