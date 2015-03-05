@@ -454,7 +454,7 @@ var JiraApi = exports.JiraApi = function(protocol, host, port, username, passwor
 
         var options = {
             rejectUnauthorized: this.strictSSL,
-            uri: this.makeUri('/rapid/charts/sprintreport?rapidViewId=' + rapidViewId + '&sprintId=' + sprintId, 'rest/greenhopper/'),
+            uri: this.makeUri('/rapid/charts/sprintreport?rapidViewId=' + rapidViewId + '&sprintId=' + sprintId, 'rest/greenhopper/', '1.0'),
             method: 'GET',
             json: true
         };
