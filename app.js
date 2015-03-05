@@ -70,10 +70,45 @@ app.use(function(err, req, res, next) {
 });
 
 var cronJob = require('cron').CronJob;
-new cronJob('* * * * * *', function(){
+new cronJob('* * * * * *', function() {
+    //var JiraApi = require('./modules/jira').JiraApi;
+    //var async   = require('async');
+    //var mongoDashboard = require('./modules/mongoDashboard');
+    //_ = require('lodash');
+    //var jira = new JiraApi('https', 'iadvize.atlassian.net', '443', 'marc.fricou', 'D4shB0rd', '2');
+    //var assert = require('assert');
+    //
+    //mongoDashboard.removeAll('active-sprint-issues', function(result){
+    //    jira.getSprintsForRapidView(4, function(error, sprints) {
+    //        async.map(
+    //            sprints,
+    //            function(sprint, f) {
+    //                if (sprint.state == 'ACTIVE') {
+    //                    jira.getSprintIssues(4, sprint.id, function(error, issues) {
+    //                        assert.equals(error, null);
+    //
+    //                        f(null, issues.contents.incompletedIssues);
+    //                    });
+    //                } else {
+    //                    f();
+    //                }
+    //            },
+    //            function(err, returnIssues) {
+    //                console.log(err);
+    //                returnIssues = _.compact(returnIssues);
+    //                console.log(returnIssues);
+    //                res.render('index.ejs', {
+    //                        title: 'Home Page',
+    //                        toto: 'toto',
+    //                        issues: returnIssues
+    //                    }
+    //                );
+    //            }
+    //        );
+    //    });
+    //});
 
 }, null, true, "America/Los_Angeles");
-
 
 module.exports = app;
 
