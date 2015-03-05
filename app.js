@@ -5,6 +5,11 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var env = require('node-env-file');
+var mongoDashboard = require('./modules/dashboardDb');
+
+env(__dirname + '/.env');
+console.log(process.env.JIRA_PASSWORD);
 
 var app = express();
 var http = require('http').Server(app);
