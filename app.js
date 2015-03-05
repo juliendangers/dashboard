@@ -15,7 +15,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var issues = require('./modules/issues');
-
+var dashboardDb = require('./modules/dashboardDb');
 
 // Route setup
 var routes = require('./routes/index');
@@ -49,7 +49,7 @@ io.on('connection', function(socket) {
 var cronJob = require('cron').CronJob;
 new cronJob('00 00 09 * * 1-5', function(data) {
     issues.getBugIssues(function(data){
-
+        dashboardDb.insert('bug-count-issues', data);
     })
 }, null, true, "Europe/Paris");
 
