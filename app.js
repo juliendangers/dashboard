@@ -9,6 +9,8 @@ var bodyParser = require('body-parser');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var issues = require('./modules/issues');
+
 
 // Route setup
 var routes = require('./routes/index');
@@ -37,6 +39,15 @@ io.on('connection', function(socket) {
         console.log('Client disconnected');
     });
 });
+
+//
+var cronJob = require('cron').CronJob;
+new cronJob('00 00 09 * * 1-5', function(data) {
+    issues.getBugIssues(function(data){
+
+    })
+}, null, true, "Europe/Paris");
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -67,12 +78,6 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
-//var cronJob = require('cron').CronJob;
-//new cronJob('* * * * * *', function(){
-//
-//}, null, true, "America/Los_Angeles");
-
 
 module.exports = app;
 
