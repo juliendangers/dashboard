@@ -9,7 +9,6 @@ var env = require('node-env-file');
 var mongoDashboard = require('./modules/dashboardDb');
 
 env(__dirname + '/.env');
-console.log(process.env.JIRA_PASSWORD);
 
 var app = express();
 var http = require('http').Server(app);
@@ -39,25 +38,26 @@ app.use('/users', users);
 
 io.on('connection', function(socket) {
     console.log('A user connected');
-
     socket.emit('init-all', {
-            "x" : ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY','DONE'],
+        "x" : ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY','DONE'],
 
-            'UX'   : [ 10, 2, 4, 8, 25],
-            'DEV'  : [30, 10, 5, 1, 4],
-            'LIVE' : [3, 5, 1, 0, 3],
-            'TOOLS': [8, 1, 0, 1, 2]
+        'UX'   : [ 10, 2, 4, 8, 25],
+        'DEV'  : [30, 10, 5, 1, 4],
+        'LIVE' : [3, 5, 1, 0, 3],
+        'TOOLS': [8, 1, 0, 1, 2]
     });
-
-    socket.on('disconnect', function(){
+    
+    socket.on('disconnect', function () {
         console.log('Client disconnected');
     });
 });
 
 //
-var cronJob = require('cron').CronJob;
-new cronJob('00 00 09 * * 1-5', function(data) {
+var CronJob = require('cron').CronJob;
+new CronJob('* * * * * 1-5', function() {
+    console.log('test');
     issues.getBugIssues(function(data){
+        console.log(data);
         dashboardDb.insert('bug-count-issues', data);
     })
 }, null, true, "Europe/Paris");
