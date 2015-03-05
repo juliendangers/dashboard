@@ -39,6 +39,8 @@ var findAll = function(collectionName, callback) {
 
     // Find some documents
     collection.find({}).toArray(function(err, result) {
+        assert.equal(null, err);
+
         if (callback) {
             callback(result);
         }
@@ -51,6 +53,8 @@ var removeAll = function(collectionName, callback) {
 
     // Find some documents
     collection.find({}).toArray(function(err, result) {
+        assert.equal(null, err);
+
         if (callback) {
             callback(result);
         }
