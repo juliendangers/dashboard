@@ -32,9 +32,10 @@ app.use('/users', users);
 
 
 io.on('connection', function(socket){
-    console.log('a user connected');
+    console.log('Client connected');
+
     socket.on('disconnect', function(){
-        console.log('user disconnected');
+        console.log('Client disconnected');
     });
 });
 
@@ -68,14 +69,14 @@ app.use(function(err, req, res, next) {
   });
 });
 
-//var cronJob = require('cron').CronJob;
-//new cronJob('* * * * * *', function(){
-//
-//}, null, true, "America/Los_Angeles");
+var cronJob = require('cron').CronJob;
+new cronJob('* * * * * *', function(){
+
+}, null, true, "America/Los_Angeles");
 
 
 module.exports = app;
 
 http.listen(8080, "127.0.0.1", function () {
-    console.log('Example app listening on port 8080');
+    console.log('Listening on port 8080');
 });
