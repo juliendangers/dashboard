@@ -46,7 +46,23 @@ io.on('connection', function(socket) {
                 'TOOLS': [8, 1, 0, 1, 2]
             },
             "burndown": {
-
+                "x":[
+                    "-",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Monday",
+                    "Tuesday",
+                    "Wednesday",
+                    "Thursday",
+                    "Friday"
+                ],
+                "base":[350,311,272,233,194,156,117,78,39,0],
+                "UX":[350,345,344],
+                "DEV":[350,340,306],
+                "LIVE":[350,350,259],
+                "TOOLS":[350,305,284]
             },
             "bugs": {
                 "number" : 92,
@@ -54,7 +70,7 @@ io.on('connection', function(socket) {
             }
         }
     );
-    
+
     socket.on('disconnect', function () {
         console.log('Client disconnected');
     });
