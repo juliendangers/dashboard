@@ -20,8 +20,7 @@ module.exports = function(grunt) {
                 },
                 files: {
                     "public/css/main.css": [
-                        "public/less/bootstrap/bootstrap.less",
-                        "public/less/dashboard.less"
+                        "public/less/all.less"
                     ]
                 }
             }

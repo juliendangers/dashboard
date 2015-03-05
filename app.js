@@ -34,7 +34,7 @@ io.on('connection', function(socket) {
     console.log('A user connected');
 
     socket.on('disconnect', function(){
-        console.log('user disconnected');
+        console.log('Client disconnected');
     });
 });
 
@@ -70,7 +70,7 @@ app.use(function(err, req, res, next) {
 
 //var cronJob = require('cron').CronJob;
 //new cronJob('* * * * * *', function(){
-
+//
 //}, null, true, "America/Los_Angeles");
 
 
