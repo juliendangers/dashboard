@@ -1,5 +1,6 @@
 var express = require('express');
-var mongoClient = require('../modules/mongoClient');
+var mongoDashboard = require('../modules/mongoDashboard');
+
 var router = express.Router();
 
 // Get HOME page

@@ -3,45 +3,49 @@ var MongoClient = require('mongodb').MongoClient
 
 var url = "mongodb://192.168.59.103:27017/dashboard-rd";
 
-var connect = function() {
+var insert = function(collectionName, array, callback) {
     MongoClient.connect(url, function(err, db) {
         assert.equal(null, err);
-        console.log("Connected correctly to server");
+
+        // Get the documents collection
+        var collection = db.collection(collectionName);
+
+        // Insert some documents
+        collection.insert(array, function(err, result) {
+            console.log(array);
+            if (callback) {
+                callback(result);
+            }
+        });
+
+        db.close();
     });
 };
 
-
-var insert = function(db, collectionName, array, callback) {
-    // Get the documents collection
-    var collection = db.collection(collectionName);
-
-    // Insert some documents
-    collection.insert(array, function(err, result) {
-        callback(result);
-    });
-};
-
-var findAll = function(db, collectionName, callback) {
-    // Get the documents collection
-    var collection = db.collection(collectionName);
-
-    // Find some documents
-    collection.find({}).toArray(function(err, result) {
-        callback(result);
-    });
-};
-
-var removeAll = function(db, collectionName, callback) {
+var findAll = function(collectionName, callback) {
     // Get the documents collection
     var collection = db.collection(collectionName);
 
     // Find some documents
     collection.find({}).toArray(function(err, result) {
-        callback(result);
+        if (callback) {
+            callback(result);
+        }
     });
 };
 
-module.exports.connect = connect;
+var removeAll = function(collectionName, callback) {
+    // Get the documents collection
+    var collection = db.collection(collectionName);
+
+    // Find some documents
+    collection.find({}).toArray(function(err, result) {
+        if (callback) {
+            callback(result);
+        }
+    });
+};
+
 module.exports.insert = insert;
 module.exports.findAll = findAll;
 module.exports.removeAll = removeAll;
