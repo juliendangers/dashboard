@@ -6,7 +6,6 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var env = require('node-env-file');
-var mongoDashboard = require('./modules/dashboardDb');
 
 env(__dirname + '/.env');
 
@@ -63,7 +62,7 @@ io.on('connection', function(socket) {
 
 //
 var CronJob = require('cron').CronJob;
-new CronJob('* * * * * 1-5', function() {
+new CronJob('* 54 22 * * 1-5', function() {
     console.log('test');
     issues.getBugIssues(function(data){
         console.log(data);
