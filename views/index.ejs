@@ -1,8 +1,45 @@
 <% layout('layout') -%>
 
-<h1>Dashboard R&D</h1>
-
-<div id="burndown"></div>
-<div id="chart"></div>
-
-
+<h1 class="mainTitle">Dashboard R&D</h1>
+<div ng-app="dashboardApp">
+	<div ng-controller="MainCtrl">
+		<div class="row">
+			<div class="six columns">
+				<div class="block">
+					<div class="hd">Sprint burndown charts</div>
+					<div class="bd">
+						<c3-simple id="burndown" config="burndown"></c3-simple>
+					</div>
+				</div>
+			</div>
+			<div class="six columns">
+				<div class="block">
+					<div class="hd">Issues charts</div>
+					<div class="bd">
+						<c3-simple id="chart" config="chart"></c3-simple>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="four columns">
+				<div class="block">
+					<div class="hd">{{ awesomeThings }}</div>
+					<div class="bd">{{ awesomeThings }}</div>
+				</div>
+			</div>
+			<div class="four columns">
+				<div class="block">
+					<div class="hd">{{ awesomeThings }}</div>
+					<div class="bd">{{ awesomeThings }}</div>
+				</div>
+			</div>
+			<div class="four columns">
+				<div class="block">
+					<div class="hd">{{ awesomeThings }}</div>
+					<div class="bd">{{ awesomeThings }}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
