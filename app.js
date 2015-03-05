@@ -39,13 +39,22 @@ app.use('/users', users);
 io.on('connection', function(socket) {
     console.log('A user connected');
     socket.emit('init-all', {
-        "x" : ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY','DONE'],
+            "chart": {
+                "x": ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY', 'DONE'],
+                'UX'   : [50, 2, 50, 8, 25],
+                'DEV'  : [30, 10, 5, 1, 4],
+                'LIVE' : [3, 5, 1, 0, 3],
+                'TOOLS': [8, 1, 0, 1, 2]
+            },
+            "burndown": {
 
-        'UX'   : [ 10, 2, 4, 8, 25],
-        'DEV'  : [30, 10, 5, 1, 4],
-        'LIVE' : [3, 5, 1, 0, 3],
-        'TOOLS': [8, 1, 0, 1, 2]
-    });
+            },
+            "bugs": {
+                "number" : 92,
+                "date": "2014-02-05"
+            }
+        }
+    );
     
     socket.on('disconnect', function () {
         console.log('Client disconnected');
