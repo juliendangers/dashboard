@@ -12,13 +12,24 @@ var insert = function(collectionName, array, callback) {
 
         // Insert some documents
         collection.insert(array, function(err, result) {
-            console.log(array);
             if (callback) {
                 callback(result);
             }
         });
 
         db.close();
+    });
+};
+
+var find = function(collectionName, criteria, callback) {
+    // Get the documents collection
+    var collection = db.collection(collectionName);
+
+    // Find some documents
+    collection.find(criteria).toArray(function(err, result) {
+        if (callback) {
+            callback(result);
+        }
     });
 };
 
