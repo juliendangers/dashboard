@@ -16,7 +16,7 @@ router.get('/', function(req, res, next) {
 	        originalEstimate: "3h",
 	        remainingEstimate: "2h", // Voir progress plutot que timetracking
 	        sprint: "DEV",
-         	points: 4,
+         	points: 4
 	    },
 	        {
 	        id: "20708",
@@ -27,7 +27,7 @@ router.get('/', function(req, res, next) {
 	        originalEstimate: "90m",
 	        remainingEstimate: "2m", // Voir progress plutot que timetracking
 	        sprint: "UX",
-	        points: 4,
+	        points: 4
 	    },
 	        {
 	        id: "20708",
@@ -37,7 +37,7 @@ router.get('/', function(req, res, next) {
 	        status: "TODO|INPROGRESS|CODEREVIEW|QUALITY|DONE",
 	        originalEstimate: "150m",
 	        remainingEstimate: "2m", // Voir progress plutot que timetracking
-	        sprint: "PRODUCT",
+	        sprint: "PRODUCT"
 	    },
 	    {
 	        id: "20708",
@@ -48,7 +48,7 @@ router.get('/', function(req, res, next) {
 	        originalEstimate: "30m",
 	        remainingEstimate: "2m", // Voir progress plutot que timetracking
 	        sprint: "LIVE",
-	        points: 4,
+	        points: 4
 	    },
 	    {
 	        id: "20708",
@@ -59,7 +59,7 @@ router.get('/', function(req, res, next) {
 	        originalEstimate: "34m",
 	        remainingEstimate: "2m", // Voir progress plutot que timetracking
 	        sprint: "DEV",
-	        points: 4,
+	        points: 4
 	    },
 	    {
 	        id: "20708",
