@@ -23,24 +23,38 @@
 		</div>
 		<div class="row">
 			<div class="four columns">
-				<div class="block">
+				<div class="block bugsBlock">
 					<div class="hd"> Open Bugs</div>
 					<div class="bd">
-							<div id="mainBin">
-						<i class="fa fa-bug fa-5x"></i> {{ bugs.number }}
-								{{ bugs.date }}</div></div>
+						<div class="wrapper">
+							<i class="fa fa-bug fa-5x"></i>
+							<p ng-cloak>{{ bugs.number }}</p>
+						</div>
+						<p class="date" ng-cloak>
+							<span>Last updated:
+							{{ bugs.date  | amDateFormat:'dddd, MMMM Do YYYY'}}</span>
+						</p>
+					</div>
 				</div>
 			</div>
 			<div class="four columns">
 				<div class="block">
-					<div class="hd">{{ awesomeThings }}</div>
+					<div class="hd">Bugs this week</div>
 					<div class="bd">{{ awesomeThings }}</div>
 				</div>
 			</div>
 			<div class="four columns">
 				<div class="block">
-					<div class="hd">{{ awesomeThings }}</div>
-					<div class="bd">{{ awesomeThings }}</div>
+					<div class="hd">Projets</div>
+					<div class="bd">
+						<ul class="projectList">
+							<li>Community <span>40%</span></li>
+							<li>NeoStats <span>80%</span></li>
+							<li>Genius Answers <span>95%</span></li>
+							<li>Performance survey <span>40%</span></li>
+							<li>Genius Insights <span>420%</span></li>
+						</ul>
+					</div>
 				</div>
 			</div>
 		</div>

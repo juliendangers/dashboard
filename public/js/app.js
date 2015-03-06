@@ -9,4 +9,5 @@
  * Main module of the application.
  */
 angular
-  .module('dashboardApp', ['angular-c3-simple']);
+  .module('dashboardApp', ['angular-c3-simple', 'angularMoment'])
+  .constant('angularMomentConfig', {});

@@ -25,7 +25,7 @@ angular.module('dashboardApp')
                     columns: []
                 },
                 color: {
-                    pattern: ['#CCC', '#000', '#69BE00', '#53A9FF', '#931C9A']
+                    pattern: ['#CCC', '#000', '#6BAC1B', '#40BEFA', '#931C9A']
                 },
                 point: {
                     r: 4
@@ -60,8 +60,8 @@ angular.module('dashboardApp')
                     type: 'bar',
                     colors: {
                         'UX': '#000',
-                        'DEV': '#69BE00',
-                        'LIVE': '#53A9FF',
+                        'DEV': '#6BAC1B',
+                        'LIVE': '#40BEFA',
                         'TOOLS': '#931C9A'
                     },
                     columns: []
