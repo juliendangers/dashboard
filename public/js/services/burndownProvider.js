@@ -13,11 +13,11 @@ angular.module('dashboardApp')
             getData : function() {
                 var datatest = {
                     "x":[
-                        "-",
                         "Monday",
                         "Tuesday",
                         "Wednesday",
                         "Thursday",
+                        "Friday",
                         "Monday",
                         "Tuesday",
                         "Wednesday",
