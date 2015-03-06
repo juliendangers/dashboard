@@ -1,6 +1,6 @@
 var express        = require('express');
 var dashboardDb = require('../modules/dashboardDb');
-var dataFormatter  = require('../modules/dataFormatter');
+var dataFormatter  = require('../modules/dataFormater');
 var router         = express.Router();
 //var issues = require('../modules/issues');
 
