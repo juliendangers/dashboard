@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 var express        = require('express');
 var mongoDashboard = require('../modules/mongoDashboard');
 var dataFormatter  = require('../modules/dataFormatter');
@@ -75,6 +76,15 @@ router.get('/', function(req, res, next) {
 	];
 
     var dataformatted = dataFormatter.burndownFormatter(dataToFormat);
+=======
+var express = require('express');
+
+var router = express.Router();
+var issues = require('../modules/issues');
+
+// Get HOME page
+router.get('/', function(req, res, next) {
+>>>>>>> 3f0867c0c8711a844eee2d587be0214f869696cd
     res.render('index.ejs', {
         title: 'Home Page',
         dataformatted :dataformatted

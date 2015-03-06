@@ -454,7 +454,7 @@ var JiraApi = exports.JiraApi = function(protocol, host, port, username, passwor
 
         var options = {
             rejectUnauthorized: this.strictSSL,
-            uri: this.makeUri('/rapid/charts/sprintreport?rapidViewId=' + rapidViewId + '&sprintId=' + sprintId, 'rest/greenhopper/'),
+            uri: this.makeUri('/rapid/charts/sprintreport?rapidViewId=' + rapidViewId + '&sprintId=' + sprintId, 'rest/greenhopper/', '1.0'),
             method: 'GET',
             json: true
         };
@@ -1816,10 +1816,10 @@ var JiraApi = exports.JiraApi = function(protocol, host, port, username, passwor
      *      }
      *  }
      */
-    this.getBacklogForRapidView = function(rapidViewId, callback) {
+    this.getBacklogForRapidView = function(rapidViewId, filterId, callback) {
         var options = {
             rejectUnauthorized: this.strictSSL,
-            uri: this.makeUri('/xboard/plan/backlog/data?rapidViewId=' + rapidViewId, 'rest/greenhopper/'),
+            uri: this.makeUri('/xboard/plan/backlog/data?rapidViewId=' + rapidViewId + '&view=planning.nodetail&quickFilter=' +filterId , 'rest/greenhopper/', '1.0'),
             method: 'GET',
             json: true
         };
