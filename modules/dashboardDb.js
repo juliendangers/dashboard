@@ -63,7 +63,7 @@ var removeAll = function(collectionName, callback) {
         var collection = db.collection(collectionName);
 
         // Find some documents
-        collection.find({}).toArray(function(err, result) {
+        collection.remove({}, function(err, result) {
             assert.equal(null, err);
 
             if (callback) {
