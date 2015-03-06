@@ -65,10 +65,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 
-//dashboardDb.removeAll('chart');
-//dashboardDb.removeAll('burndown');
-//dashboardDb.insert('chart',datachart);
-//dashboardDb.insert('burndown',datatest);
+
 
 io.on('connection', function(socket) {
     console.log('A user connected');
