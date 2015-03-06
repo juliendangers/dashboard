@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 var formatBurndown = function(dataToFormat, oldDataFormated, callback) {
-	 	if(oldDataFormated.UX.length == 14) {
+	 	if(!oldDataFormated || oldDataFormated.UX.length == 14) {
  			var formatedData = { 
 				"x":[ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Monday", "Tuesday", "Wednesday", "Thursday","Friday" ],
 				"base":[],
@@ -36,7 +36,7 @@ var formatBurndown = function(dataToFormat, oldDataFormated, callback) {
 			 	var totalRemainingEstimate = item.reduce(function(prev, current) {
 			 		return prev + _.parseInt(current.remainingEstimate.replace('m',''));
 			 	}, 0);
-			 	console.log(formatedData[data.sprint]);
+
 			 	formatedData[data.sprint].push(totalRemainingEstimate);
 			 	return data;
    		}).value();
@@ -44,8 +44,46 @@ var formatBurndown = function(dataToFormat, oldDataFormated, callback) {
     callback(formatedData);
 };
 
-var formatChart = function(dataToFormat, oldDataFormated, callback) {
-    callback(formatedData);
+var formatChart = function(dataToFormat, callback) {
+    var chartData = {
+        "x" : ['TO DO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY','DONE'],
+        'UX'   : [],
+        'DEV'  : [],
+        'LIVE' : [],
+        'IT': []
+    };
+
+    _.chain(dataToFormat).groupBy('sprint').map(function(sprintIssues) {
+        var issuesByStatus = {
+            "TO_DO" : 0,
+            "IN_PROGRESS": 0,
+            "CODE_REVIEW": 0,
+            "AWAITING_QUALITY": 0,
+            "DONE": 0
+        };
+
+        var temp = _.groupBy(sprintIssues, 'status');
+
+        _.map(temp, function(statusIssues) {
+            var statusName = statusIssues[0].status;
+
+            issuesByStatus[statusName] = statusIssues.length;
+        });
+
+        var sprintName = sprintIssues[0].sprint;
+
+        chartData[sprintName] = [
+            issuesByStatus['TO_DO'],
+            issuesByStatus['IN_PROGRESS'],
+            issuesByStatus['CODE_REVIEW'],
+            issuesByStatus['AWAITING_QUALITY'],
+            issuesByStatus['DONE']
+        ];
+    }).value();
+
+    if (callback) {
+        callback(chartData);
+    }
 };
 
 module.exports.formatBurndown = formatBurndown;
