@@ -139,6 +139,7 @@ new CronJob('00 05 * * * *', function() {
 
                         searchResult.issues.forEach(function (issueDetail) {
                             var formattedIssue = {
+                                id: issueDetail.key,
                                 type: issueDetail.fields.issuetype.name.toUpperCase(),
                                 timeSpent: issueDetail.fields.timespent || 0,
                                 project: issueDetail.fields.project.key,
@@ -164,6 +165,7 @@ new CronJob('00 05 * * * *', function() {
 
                             searchResult.issues.forEach(function (itIssueDetail) {
                                 var itFormattedIssue = {
+                                    id: itIssueDetail.key,
                                     type: itIssueDetail.fields.issuetype.name.toUpperCase(),
                                     timeSpent: itIssueDetail.fields.timespent || 0,
                                     project: itIssueDetail.fields.project.key,
