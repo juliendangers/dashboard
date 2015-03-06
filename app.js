@@ -19,6 +19,35 @@ var dashboardDb = require('./modules/dashboardDb');
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+//DataTest
+var datatest = {
+    "x":[
+        "Lundi",
+        "Mardi",
+        "Mercredi",
+        "Jeudi",
+        "Vendredi",
+        "Lundi",
+        "Mardi",
+        "Mercredi",
+        "Jeudi",
+        "Vendredi"
+    ],
+    "base":[350,311,272,233,194,156,117,78,39,0],
+    "UX":[350,345,344,310,280,330,370],
+    "DEV":[350,340,306,250,308,309],
+    "LIVE":[350,350,259],
+    "TOOLS":[350,305,284]
+};
+
+var datachart = {
+    "x" : ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY','DONE'],
+
+    'UX'   : [ 10, 2, 4, 8, 25],
+    'DEV'  : [30, 10, 5, 1, 4],
+    'LIVE' : [3, 5, 1, 0, 3],
+    'TOOLS': [8, 1, 0, 1, 2]
+};
 app.engine('ejs', engine);
 
 // View engine setup
@@ -34,6 +63,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+
+//dashboardDb.removeAll('chart');
+//dashboardDb.removeAll('burndown');
+//dashboardDb.insert('chart',datachart);
+//dashboardDb.insert('burndown',datatest);
 
 io.on('connection', function(socket) {
     console.log('A user connected');
@@ -64,11 +98,7 @@ io.on('connection', function(socket) {
 });
 
 var CronJob = require('cron').CronJob;
-new CronJob('00 00 * * * *', function() {
-    //issues.getBugIssues(function(data){
-    //    dashboardDb.insert('bug-count-issues', data);
-    //    io.sockets.emit('init-bugs', data);
-    //});
+new CronJob('00 05 * * * *', function() {
 
     var JiraApi = require('./modules/jira').JiraApi;
     var _ = require('lodash');

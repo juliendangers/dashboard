@@ -10,12 +10,12 @@
         padding: 15px 10px;
         background-color: @backgroundBlock;
         color: @fontColor;
+        min-height: 170px;
     }
 }
 
 .bugsBlock {
     .wrapper {
-        overflow: hidden;
         p {
             color: @white;
             font-size: 80px;
@@ -41,5 +41,37 @@
     span {
         float: right;
         color: #FFC300;
+    }
+}
+
+.bugsWeek {
+    .left {
+        color: @green;
+        width: 45%;
+        margin-top: 40px;
+        text-align: center;
+    }
+    .right {
+        width: 45%;
+        margin-top: 40px;
+        text-align: center;
+        color: @red;
+    }
+    span {
+        font-size: 40px;
+        line-height: 40px;
+    }
+    p {
+        margin: 0;
+    }
+}
+
+.wrapper {
+    overflow: hidden;
+    .left {
+        float: left;
+    }
+    .right {
+        float: right;
     }
 }
