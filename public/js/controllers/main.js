@@ -25,7 +25,7 @@ angular.module('dashboardApp')
                     columns: []
                 },
                 color: {
-                    pattern: ['#CCC', '#000', '#6BAC1B', '#40BEFA', '#931C9A']
+                    pattern: ['#3C3D42', '#CCC', '#000', '#6BAC1B', '#40BEFA', '#931C9A']
                 },
                 point: {
                     r: 4
@@ -59,10 +59,11 @@ angular.module('dashboardApp')
                     json: $scope.datachart,
                     type: 'bar',
                     colors: {
+                        '_id': '#3C3D42',
                         'UX': '#000',
                         'DEV': '#6BAC1B',
                         'LIVE': '#40BEFA',
-                        'TOOLS': '#931C9A'
+                        'IT': '#931C9A'
                     },
                     columns: []
                 },
