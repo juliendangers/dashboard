@@ -54,8 +54,8 @@ io.on('connection', function(socket) {
                         "bugs": bugsCount
                     }
                 );
-            };
-        };
+            });
+        });
     });
 
     socket.on('disconnect', function () {
