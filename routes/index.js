@@ -1,12 +1,11 @@
-<<<<<<< HEAD
 var express        = require('express');
-var mongoDashboard = require('../modules/mongoDashboard');
+var dashboardDb = require('../modules/dashboardDb');
 var dataFormatter  = require('../modules/dataFormatter');
 var router         = express.Router();
+var issues = require('../modules/issues');
 
 // Get HOME page
 router.get('/', function(req, res, next) {
-    mongoDashboard.insert
     var dataToFormat = [
 	    {
 	        id: "20708",
@@ -71,20 +70,12 @@ router.get('/', function(req, res, next) {
 	        originalEstimate: "24m",
 	        remainingEstimate: "2m", // Voir progress plutot que timetracking
 	        sprint: "IT",
-	        points: 4,
-	    },
+	        points: 4
+	    }
 	];
 
     var dataformatted = dataFormatter.burndownFormatter(dataToFormat);
-=======
-var express = require('express');
 
-var router = express.Router();
-var issues = require('../modules/issues');
-
-// Get HOME page
-router.get('/', function(req, res, next) {
->>>>>>> 3f0867c0c8711a844eee2d587be0214f869696cd
     res.render('index.ejs', {
         title: 'Home Page',
         dataformatted :dataformatted

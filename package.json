@@ -16,12 +16,10 @@
     "ejs-mate": "^2.1.0",
     "express": "~4.12.0",
     "grunt": "^0.4.5",
-<<<<<<< HEAD
     "lodash": "^3.3.1",
     "mongodb": "^1.4.33",
     "morgan": "~1.5.1",
     "mysql": "^2.5.5",
-=======
     "grunt-cli": "^0.1.13",
     "lodash": "~3.3.1",
     "moment": "^2.9.0",
@@ -29,7 +27,6 @@
     "morgan": "~1.5.1",
     "mysql": "^2.5.5",
     "node-env-file": "^0.1.7",
->>>>>>> 3f0867c0c8711a844eee2d587be0214f869696cd
     "oauth": "~0.9.12",
     "request": "~2.53.0",
     "serve-favicon": "~2.2.0",
