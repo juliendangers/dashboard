@@ -19,7 +19,7 @@ var burndownFormatter = function(dataToFormat, oldDataFormated, callback) {
 
    		// calcul de la base
 		var diff = Math.round(maxTotalOriginalEstimate/14);
-		var base;
+		var base = [];
 		base.push(maxTotalOriginalEstimate-diff);
 
 		for (var i = 1; i < 14; ++i) {

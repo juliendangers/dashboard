@@ -2,7 +2,7 @@ var express        = require('express');
 var dashboardDb = require('../modules/dashboardDb');
 var dataFormatter  = require('../modules/dataFormatter');
 var router         = express.Router();
-var issues = require('../modules/issues');
+//var issues = require('../modules/issues');
 
 // Get HOME page
 router.get('/', function(req, res, next) {
@@ -74,11 +74,11 @@ router.get('/', function(req, res, next) {
 	    }
 	];
 
-    var dataformatted = dataFormatter.burndownFormatter(dataToFormat);
+   // var dataformatted = dataFormatter.burndownFormatter(dataToFormat);
 
     res.render('index.ejs', {
         title: 'Home Page',
-        dataformatted :dataformatted
+       // dataformatted :dataformatted
     });
 });
 
