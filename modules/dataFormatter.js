@@ -1,14 +1,6 @@
 var _ = require('lodash');
 
 var formatBurndown = function(dataToFormat, oldDataFormated, callback) {
-	var formatedData = { 
-		"x":[ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Monday", "Tuesday", "Wednesday", "Thursday","Friday" ],
-		"base":[],
-	    "UX":[1, 3],
-	    "DEV":[3],
-	    "LIVE":[4],
-	    "IT":[5]
-	 };
 	 	if(oldDataFormated.UX.length == 14) {
  			var formatedData = { 
 				"x":[ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Monday", "Tuesday", "Wednesday", "Thursday","Friday" ],
@@ -49,7 +41,12 @@ var formatBurndown = function(dataToFormat, oldDataFormated, callback) {
 			 	return data;
    		}).value();
 
-    return formatedData;
+    callback(formatedData);
+};
+
+var formatChart = function(dataToFormat, oldDataFormated, callback) {
+    callback(formatedData);
 };
 
 module.exports.formatBurndown = formatBurndown;
+module.exports.formatChart = formatChart;
