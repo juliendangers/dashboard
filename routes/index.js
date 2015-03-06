@@ -37,7 +37,7 @@ router.get('/', function(req, res, next) {
 	        status: "TODO|INPROGRESS|CODEREVIEW|QUALITY|DONE",
 	        originalEstimate: "150m",
 	        remainingEstimate: "2m", // Voir progress plutot que timetracking
-	        sprint: "PRODUCT"
+	        sprint: "UX"
 	    },
 	    {
 	        id: "20708",
