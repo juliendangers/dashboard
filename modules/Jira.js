@@ -802,7 +802,7 @@ var JiraApi = exports.JiraApi = function(protocol, host, port, username, passwor
                 jql: searchString,
                 startAt: optional.startAt || 0,
                 maxResults: optional.maxResults || 50,
-                fields: optional.fields || ["summary", "status", "assignee", "description"]
+                //fields: optional.fields || ["summary", "status", "assignee", "description"]
             }
         };
 
