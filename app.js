@@ -80,7 +80,7 @@ io.on('connection', function(socket) {
 });
 
 var CronJob = require('cron').CronJob;
-new CronJob('* * 23 * * 1-5', function() {
+new CronJob('* 23 * * * 1-5', function() {
     console.log('test');
     issues.getBugIssues(function(data){
         dashboardDb.insert('bug-count-issues', data);

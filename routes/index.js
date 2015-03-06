@@ -77,7 +77,7 @@ router.get('/', function(req, res, next) {
    // var dataformatted = dataFormatter.burndownFormatter(dataToFormat);
 
     res.render('index.ejs', {
-        title: 'Home Page',
+        title: 'Home Page'
        // dataformatted :dataformatted
     });
 });
