@@ -14,6 +14,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var issues = require('./modules/issues');
 var dashboardDb = require('./modules/dashboardDb');
+var dataFormater = require('./modules/dataFormater');
 
 // Route setup
 var routes = require('./routes/index');
@@ -124,31 +125,35 @@ new CronJob('00 00 * * * *', function() {
                     });
                 }
             });
-        });
 
-        jira.getSprintsForRapidView(31, function(error, itSprints) {
-            itSprints.forEach(function(ITsprint) {
-                if (ITsprint.state == 'ACTIVE') {
-                    jira.searchJira('Sprint=' + ITsprint.id, options, function (error, searchResult) {
-                        assert.equal(error, null);
+            jira.getSprintsForRapidView(31, function(error, itSprints) {
+                itSprints.forEach(function(ITsprint) {
+                    if (ITsprint.state == 'ACTIVE') {
+                        jira.searchJira('Sprint=' + ITsprint.id, options, function (error, searchResult) {
+                            assert.equal(error, null);
 
-                        searchResult.issues.forEach(function (itIssueDetail) {
-                            var itFormattedIssue = {
-                                type: itIssueDetail.fields.issuetype.name.toUpperCase(),
-                                timeSpent: itIssueDetail.fields.timespent || 0,
-                                project: itIssueDetail.fields.project.key,
-                                status: itIssueDetail.fields.status.statusCategory.name.replace(' ', '').toUpperCase(),
-                                originalEstimate: itIssueDetail.fields.aggregatetimeoriginalestimate || 0,
-                                remainingEstimate: itIssueDetail.fields.timeestimate, // Voir progress plutot que timetracking
-                                sprint: 'IT'
-                            };
+                            searchResult.issues.forEach(function (itIssueDetail) {
+                                var itFormattedIssue = {
+                                    type: itIssueDetail.fields.issuetype.name.toUpperCase(),
+                                    timeSpent: itIssueDetail.fields.timespent || 0,
+                                    project: itIssueDetail.fields.project.key,
+                                    status: itIssueDetail.fields.status.statusCategory.name.replace(' ', '').toUpperCase(),
+                                    originalEstimate: itIssueDetail.fields.aggregatetimeoriginalestimate || 0,
+                                    remainingEstimate: itIssueDetail.fields.timeestimate, // Voir progress plutot que timetracking
+                                    sprint: 'IT'
+                                };
 
-                            dashboardDb.insert('active-sprint-issues', [itFormattedIssue], function(result){
-                                console.log('insertion');
+                                dashboardDb.insert('active-sprint-issues', [itFormattedIssue], function(result){
+                                    console.log('insertion');
+                                });
                             });
                         });
-                    });
-                }
+                    }
+                });
+
+                // Update burndown et chart data
+                var issues = dashboardDb.findAll('active-sprint-issues');
+
             });
         });
     });
