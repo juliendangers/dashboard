@@ -41,7 +41,7 @@ io.on('connection', function(socket) {
 
     var bugsCount = 0;
     dashboardDb.find('bug-count-issues', {}, function(bugsCount) {
-        bugsCount = bugsCount[0];
+        bugsCount = bugsCount[bugsCount.length - 1];
 
         dashboardDb.find('burndown', {}, function(burndownData) {
             burndownData = burndownData[0];
@@ -76,21 +76,20 @@ new CronJob('45 * * * * *', function() {
     var options = {
         maxResults: 500
     };
-
-    issues.getBugIssues(function(data){
-        dashboardDb.insert('bug-count-issues', data);
-        io.sockets.emit('init-bugs', data);
+    dashboardDb.removeAll('bug-count-issues', function(result){
+        issues.getBugIssues(function(data){
+            dashboardDb.insert('bug-count-issues', data);
+            io.sockets.emit('init-bugs', data);
+        });
     });
+
 
     dashboardDb.removeAll('active-sprint-issues', function(result){
         jira.getSprintsForRapidView(4, function(error, sprints) {
-            console.log('Sprints found');
             assert.equal(error, null);
             var sprint;
             sprints.forEach(function(sprint){
                 if (sprint.state == 'ACTIVE') {
-                    console.log('Active sprint found');
-
                     var sprintName = 'UNKNOWN';
 
                     if (_.includes(sprint.name, 'DEV')) {
@@ -102,11 +101,10 @@ new CronJob('45 * * * * *', function() {
                     }
                     assert.equal(error, null);
 
-                    var currentSprint = sprint;
-
                     jira.searchJira('Sprint=' + sprint.id, options, function (error, searchResult) {
-                        console.log('Issues for sprint ' + currentSprint.name);
                         assert.equal(error, null);
+
+                        console.log('issues found: ' + searchResult.issues.length);
 
                         searchResult.issues.forEach(function (issueDetail) {
                             var formattedIssue = {
@@ -119,10 +117,8 @@ new CronJob('45 * * * * *', function() {
                                 remainingEstimate: issueDetail.fields.timeestimate, // Voir progress plutot que timetracking
                                 sprint: sprintName
                             };
-                            console.log(formattedIssue);
-                            dashboardDb.insert('active-sprint-issues', [formattedIssue], function(result){
-                                console.log('insertion');
-                            });
+
+                            dashboardDb.insert('active-sprint-issues', [formattedIssue]);
                         });
                     });
                 }
@@ -133,6 +129,8 @@ new CronJob('45 * * * * *', function() {
                     if (ITsprint.state == 'ACTIVE') {
                         jira.searchJira('Sprint=' + ITsprint.id, options, function (error, searchResult) {
                             assert.equal(error, null);
+
+                            console.log('issues found: ' + searchResult.issues.length);
 
                             searchResult.issues.forEach(function (itIssueDetail) {
                                 var itFormattedIssue = {
@@ -146,9 +144,7 @@ new CronJob('45 * * * * *', function() {
                                     sprint: 'IT'
                                 };
 
-                                dashboardDb.insert('active-sprint-issues', [itFormattedIssue], function(result){
-                                    console.log('insertion');
-                                });
+                                dashboardDb.insert('active-sprint-issues', [itFormattedIssue]);
                             });
                         });
                     }

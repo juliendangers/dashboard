@@ -92,6 +92,10 @@ angular.module('dashboardApp')
             $scope.bugs = data.bugs;
         });
 
+        socket.on('init-bugs', function (data) {
+            $scope.bugs = data[0];
+        });
+
         $scope.$watch('datachart', function(newSeries, oldSeries) {
             c3SimpleService[$scope.chart.bindto] = c3.generate(setChart());
         });
