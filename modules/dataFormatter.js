@@ -52,4 +52,4 @@ var formatBurndown = function(dataToFormat, oldDataFormated, callback) {
     return formatedData;
 };
 
-module.exports.burndownFormatter = burndownFormatter;
+module.exports.formatBurndown = formatBurndown;
