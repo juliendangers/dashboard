@@ -111,7 +111,7 @@ new CronJob('00 00 * * * *', function() {
                                 type: issueDetail.fields.issuetype.name.toUpperCase(),
                                 timeSpent: issueDetail.fields.timespent || 0,
                                 project: issueDetail.fields.project.key,
-                                status: issueDetail.fields.status.name,
+                                status: issueDetail.fields.status.statusCategory.name.replace(' ', '').toUpperCase(),
                                 originalEstimate: issueDetail.fields.aggregatetimeoriginalestimate || 0,
                                 remainingEstimate: issueDetail.fields.timeestimate, // Voir progress plutot que timetracking
                                 sprint: sprintName
@@ -137,7 +137,7 @@ new CronJob('00 00 * * * *', function() {
                                 type: itIssueDetail.fields.issuetype.name.toUpperCase(),
                                 timeSpent: itIssueDetail.fields.timespent || 0,
                                 project: itIssueDetail.fields.project.key,
-                                status: itIssueDetail.fields.status.name,
+                                status: itIssueDetail.fields.status.statusCategory.name.replace(' ', '').toUpperCase(),
                                 originalEstimate: itIssueDetail.fields.aggregatetimeoriginalestimate || 0,
                                 remainingEstimate: itIssueDetail.fields.timeestimate, // Voir progress plutot que timetracking
                                 sprint: 'IT'
