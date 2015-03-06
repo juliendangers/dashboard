@@ -15,7 +15,7 @@ var formatBurndown = function(dataToFormat, oldDataFormated, callback) {
 		// get maxTotalOriginalEstimate
    		var maxTotalOriginalEstimate = _.max(_.chain(dataToFormat).groupBy('sprint').map(function(item){  		
 			 	return item.reduce(function(prev, current) {
-			 		return prev + _.parseInt(current.originalEstimate.replace('m',''));
+			 		return prev + _.parseInt(current.originalEstimate);
 			 	}, 0);
    		}).value());
 
@@ -34,7 +34,7 @@ var formatBurndown = function(dataToFormat, oldDataFormated, callback) {
    		var totalRemainingEstimate = _.chain(dataToFormat).groupBy('sprint').map(function(item){
    				var data = { 'sprint': item[0].sprint, 'totalRemainingEstimate': 0};	
 			 	var totalRemainingEstimate = item.reduce(function(prev, current) {
-			 		return prev + _.parseInt(current.remainingEstimate.replace('m',''));
+			 		return prev + _.parseInt(current.remainingEstimate);
 			 	}, 0);
 
 			 	formatedData[data.sprint].push(totalRemainingEstimate);
