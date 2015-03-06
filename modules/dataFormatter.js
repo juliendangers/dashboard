@@ -1,6 +1,6 @@
 var _ = require('lodash');
 
-var burndownFormatter = function(dataToFormat, oldDataFormated, callback) {
+var formatBurndown = function(dataToFormat, oldDataFormated, callback) {
 	var formatedData = { 
 		"x":[ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Monday", "Tuesday", "Wednesday", "Thursday","Friday" ],
 		"base":[],
@@ -9,6 +9,16 @@ var burndownFormatter = function(dataToFormat, oldDataFormated, callback) {
 	    "LIVE":[4],
 	    "IT":[5]
 	 };
+	 	if(oldDataFormated.UX.length == 14) {
+ 			var formatedData = { 
+				"x":[ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Monday", "Tuesday", "Wednesday", "Thursday","Friday" ],
+				"base":[],
+			    "UX":[],
+			    "DEV":[],
+			    "LIVE":[],
+			    "IT":[]
+	 		};
+	 	}
 
 		// get maxTotalOriginalEstimate
    		var maxTotalOriginalEstimate = _.max(_.chain(dataToFormat).groupBy('sprint').map(function(item){  		
@@ -35,14 +45,9 @@ var burndownFormatter = function(dataToFormat, oldDataFormated, callback) {
 			 		return prev + _.parseInt(current.remainingEstimate.replace('m',''));
 			 	}, 0);
 			 	console.log(formatedData[data.sprint]);
-			 	debugger;
 			 	formatedData[data.sprint].push(totalRemainingEstimate);
 			 	return data;
    		}).value();
-
-   		console.log(formatedData);
-
- 
 
     return formatedData;
 };

@@ -42,36 +42,20 @@ io.on('connection', function(socket) {
     dashboardDb.find('bug-count-issues', {}, function(bugsCount) {
         bugsCount = bugsCount[0];
 
-        socket.emit('init-all', {
-                "chart": {
-                    "x": ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY', 'DONE'],
-                    'UX'   : [50, 2, 50, 8, 25],
-                    'DEV'  : [30, 10, 5, 1, 4],
-                    'LIVE' : [3, 5, 1, 0, 3],
-                    'TOOLS': [8, 1, 0, 1, 2]
-                },
-                "burndown": {
-                    "x":[
-                        "-",
-                        "Monday",
-                        "Tuesday",
-                        "Wednesday",
-                        "Thursday",
-                        "Monday",
-                        "Tuesday",
-                        "Wednesday",
-                        "Thursday",
-                        "Friday"
-                    ],
-                    "base":[350,311,272,233,194,156,117,78,39,0],
-                    "UX":[350,345,344],
-                    "DEV":[350,340,306],
-                    "LIVE":[350,350,259],
-                    "TOOLS":[350,305,284]
-                },
-                "bugs": bugsCount
-            }
-        );
+        dashboardDb.find('burndown', {}, function(burndownData) {
+            burndownData = burndownData[0];
+
+            dashboardDb.find('chart', {}, function(chartData) {
+                chartData = chartData[0];
+
+                socket.emit('init-all', {
+                        "chart": chartData,
+                        "burndown": burndownData,
+                        "bugs": bugsCount
+                    }
+                );
+            });
+        });
     });
 
     socket.on('disconnect', function () {
