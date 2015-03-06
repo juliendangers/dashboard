@@ -31,14 +31,12 @@ var formatBurndown = function(dataToFormat, oldDataFormated, callback) {
 		formatedData.base = base;
 
 		// get maxTotalremainingEstimate
-   		var totalRemainingEstimate = _.chain(dataToFormat).groupBy('sprint').map(function(item){
+   		_.chain(dataToFormat).groupBy('sprint').map(function(item){
    				var data = { 'sprint': item[0].sprint, 'totalRemainingEstimate': 0};	
 			 	var totalRemainingEstimate = item.reduce(function(prev, current) {
 			 		return prev + _.parseInt(current.remainingEstimate);
 			 	}, 0);
-
 			 	formatedData[data.sprint].push(totalRemainingEstimate);
-			 	return data;
    		}).value();
 
     callback(formatedData);
