@@ -65,7 +65,7 @@ io.on('connection', function(socket) {
 });
 
 var CronJob = require('cron').CronJob;
-new CronJob('00 05 * * * *', function() {
+new CronJob('45 * * * * *', function() {
 
     var JiraApi = require('./modules/jira').JiraApi;
     var _ = require('lodash');
@@ -76,6 +76,11 @@ new CronJob('00 05 * * * *', function() {
     var options = {
         maxResults: 500
     };
+
+    issues.getBugIssues(function(data){
+        dashboardDb.insert('bug-count-issues', data);
+        io.sockets.emit('init-bugs', data);
+    });
 
     dashboardDb.removeAll('active-sprint-issues', function(result){
         jira.getSprintsForRapidView(4, function(error, sprints) {
