@@ -14,7 +14,7 @@ angular.module('dashboardApp')
                  var datachart = {
                     "x" : ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY','DONE'],
 
-                    'UX'   : [ 10, 2, 4, 8, 25],
+                    'UX'   : [10, 2, 4, 8, 25],
                     'DEV'  : [30, 10, 5, 1, 4],
                     'LIVE' : [3, 5, 1, 0, 3],
                     'TOOLS': [8, 1, 0, 1, 2]
