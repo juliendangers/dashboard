@@ -40,24 +40,27 @@ app.use('/users', users);
 io.on('connection', function(socket) {
     console.log('A user connected');
 
-    var bugsCount = 0;
+    // Update bug count widget
     dashboardDb.find('bug-count-issues', {}, function(bugsCount) {
-        bugsCount = bugsCount[bugsCount.length - 1];
+        bugsCount = bugsCount ? bugsCount[bugsCount.length - 1] : {number: '/'};
+        socket.emit('update-bugs', bugsCount);
+    });
 
-        dashboardDb.find('burndown', {}, function(burndownData) {
-            burndownData = burndownData[0];
+    // Update burndown widget
+    dashboardDb.find('burndown', {}, function(burndownData) {
+        var burndownDefaultData = [];
 
-            dashboardDb.find('chart', {}, function(chartData) {
-                chartData = chartData[0];
+        burndownData = burndownData.length >= 0 ? burndownData[0] : burndownDefaultData;
+        socket.emit('update-burndown', burndownData);
+    });
 
-                socket.emit('init-all', {
-                        "chart": chartData,
-                        "burndown": burndownData,
-                        "bugs": bugsCount
-                    }
-                );
-            });
-        });
+    // Update chart widget
+    dashboardDb.find('chart', {}, function(chartData) {
+        burndownDefaultData = [];
+        
+        chartData = chartData.length ? chartData[0] : burndownDefaultData;
+
+        socket.emit('update-chart', chartData);
     });
 
     socket.on('disconnect', function () {

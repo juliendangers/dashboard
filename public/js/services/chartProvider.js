@@ -11,7 +11,7 @@ angular.module('dashboardApp')
     .service('Chart', function () {
         return {
             getData : function() {
-                 var datachart = {
+                 var dataChart = {
                     "x" : ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY','DONE'],
 
                     'UX'   : [10, 2, 4, 8, 25],
@@ -20,7 +20,7 @@ angular.module('dashboardApp')
                     'TOOLS': [8, 1, 0, 1, 2]
                 };
 
-                return datachart;
+                return dataChart;
             }
         }
     });
