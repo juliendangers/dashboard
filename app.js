@@ -5,14 +5,15 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var env = require('node-env-file');
 var async = require('async');
 
+var env = require('node-env-file');
 env(__dirname + '/.env');
 
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+
 var issues = require('./modules/issues');
 var dashboardDb = require('./modules/dashboardDb');
 var dataFormater = require('./modules/dataFormater');
@@ -48,18 +49,30 @@ io.on('connection', function(socket) {
 
     // Update burndown widget
     dashboardDb.find('burndown', {}, function(burndownData) {
-        var burndownDefaultData = [];
+        var burndownDefaultData = {
+            "x":["Monday","Tuesday","Wednesday","Thursday","Friday","Monday","Tuesday","Wednesday","Thursday","Friday"],
+            "base":[],
+            "UX":[],
+            "DEV":[],
+            "LIVE":[],
+            "TOOLS":[]
+        };
 
-        burndownData = burndownData.length >= 0 ? burndownData[0] : burndownDefaultData;
+        burndownData = burndownData ? burndownData[0] : burndownDefaultData;
         socket.emit('update-burndown', burndownData);
     });
 
     // Update chart widget
     dashboardDb.find('chart', {}, function(chartData) {
-        burndownDefaultData = [];
-        
-        chartData = chartData.length ? chartData[0] : burndownDefaultData;
+        burndownDefaultData = {
+            "x" : ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY','DONE'],
+            'UX'   : [],
+            'DEV'  : [],
+            'LIVE' : [],
+            'TOOLS': []
+        };
 
+        chartData = chartData ? chartData[0] : burndownDefaultData;
         socket.emit('update-chart', chartData);
     });
 
