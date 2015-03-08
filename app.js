@@ -96,7 +96,8 @@ new CronJob('45 * * * * *', function() {
     dashboardDb.removeAll('bug-count-issues', function(result){
         issues.getBugIssues(function(data){
             dashboardDb.insert('bug-count-issues', data);
-            io.sockets.emit('init-bugs', data);
+
+            io.sockets.emit('update-bugs', data);
         });
     });
 
@@ -212,11 +213,10 @@ new CronJob('45 * * * * *', function() {
                     function (formatedBurndownData, formatedChartData, callback) {
                         dashboardDb.findAll('bug-count-issues', function(bugs){
                             bugsCount = bugs[0];
-                            io.emit('init-all', {
-                                "chart": formatedChartData,
-                                "burndown": formatedBurndownData,
-                                "bugs": bugsCount
-                            });
+                            socket.emit('update-bugs', bugsCount);
+                            socket.emit('update-burndown', formatedBurndownData);
+                            socket.emit('update-chart', formatedChartData);
+
                             callback();
                         });
                     }
