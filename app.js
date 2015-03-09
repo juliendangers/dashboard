@@ -93,17 +93,20 @@ new CronJob('45 * * * * *', function() {
     var options = {
         maxResults: 500
     };
-    dashboardDb.removeAll('bug-count-issues', function(result){
-        issues.getBugIssues(function(data){
-            dashboardDb.insert('bug-count-issues', data);
 
+    // Get bug issues from JIRA, add them into mongo and refresh all dashboards
+    dashboardDb.removeAll('bug-count-issues', function(){
+        issues.getBugIssues(function(data) {
+            dashboardDb.insert('bug-count-issues', data);
             io.sockets.emit('update-bugs', data);
         });
     });
 
+    // Update
     dashboardDb.removeAll('active-sprint-issues', function(result){
         jira.getSprintsForRapidView(4, function(error, sprints) {
             assert.equal(error, null);
+
             var sprint;
             sprints.forEach(function(sprint){
                 if (sprint.state == 'ACTIVE') {
@@ -163,12 +166,16 @@ new CronJob('45 * * * * *', function() {
                     }
                 });
 
+
+                // Update all charts
+                dashboardDb.findAll('active-sprint-issues', function(issues) {
+
+                });
+
                 // Update burndown et chart data
                 async.waterfall([
                     function (callback) {
-                        dashboardDb.findAll('active-sprint-issues', function(issues) {
-                            callback(null, issues);
-                        });
+
                     },
                     function (issues, callback) {
                         dashboardDb.findAll('burndown', function(burndowns) {
