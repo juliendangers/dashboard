@@ -176,11 +176,8 @@ new CronJob('45 * * * * *', function() {
                         });
                     },
                     function (issues, burndowns, callback) {
-                        var previousFormatedData = burndowns[0];
-                        console.log("issues");
-                        console.log(issues);
-                        console.log("previousFormatedData");
-                        console.log(previousFormatedData);
+                        var previousFormatedData = burndowns ? burndowns[0] : [];
+
                         dataFormater.formatBurndown(issues, previousFormatedData, function(formatedBurndownData) {
                             callback(null, burndowns, formatedBurndownData);
                         });
