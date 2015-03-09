@@ -5,14 +5,15 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var env = require('node-env-file');
 var async = require('async');
 
+var env = require('node-env-file');
 env(__dirname + '/.env');
 
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+
 var issues = require('./modules/issues');
 var dashboardDb = require('./modules/dashboardDb');
 var dataFormater = require('./modules/dataFormater');
@@ -40,24 +41,39 @@ app.use('/users', users);
 io.on('connection', function(socket) {
     console.log('A user connected');
 
-    var bugsCount = 0;
+    // Update bug count widget
     dashboardDb.find('bug-count-issues', {}, function(bugsCount) {
-        bugsCount = bugsCount[bugsCount.length - 1];
+        bugsCount = bugsCount ? bugsCount[bugsCount.length - 1] : {number: '/'};
+        socket.emit('update-bugs', bugsCount);
+    });
 
-        dashboardDb.find('burndown', {}, function(burndownData) {
-            burndownData = burndownData[0];
+    // Update burndown widget
+    dashboardDb.find('burndown', {}, function(burndownData) {
+        var burndownDefaultData = {
+            "x":["Monday","Tuesday","Wednesday","Thursday","Friday","Monday","Tuesday","Wednesday","Thursday","Friday"],
+            "base":[],
+            "UX":[],
+            "DEV":[],
+            "LIVE":[],
+            "TOOLS":[]
+        };
 
-            dashboardDb.find('chart', {}, function(chartData) {
-                chartData = chartData[0];
+        burndownData = burndownData ? burndownData[0] : burndownDefaultData;
+        socket.emit('update-burndown', burndownData);
+    });
 
-                socket.emit('init-all', {
-                        "chart": chartData,
-                        "burndown": burndownData,
-                        "bugs": bugsCount
-                    }
-                );
-            });
-        });
+    // Update chart widget
+    dashboardDb.find('chart', {}, function(chartData) {
+        burndownDefaultData = {
+            "x" : ['TODO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY','DONE'],
+            'UX'   : [],
+            'DEV'  : [],
+            'LIVE' : [],
+            'TOOLS': []
+        };
+
+        chartData = chartData ? chartData[0] : burndownDefaultData;
+        socket.emit('update-chart', chartData);
     });
 
     socket.on('disconnect', function () {
@@ -80,7 +96,8 @@ new CronJob('45 * * * * *', function() {
     dashboardDb.removeAll('bug-count-issues', function(result){
         issues.getBugIssues(function(data){
             dashboardDb.insert('bug-count-issues', data);
-            io.sockets.emit('init-bugs', data);
+
+            io.sockets.emit('update-bugs', data);
         });
     });
 
@@ -196,11 +213,10 @@ new CronJob('45 * * * * *', function() {
                     function (formatedBurndownData, formatedChartData, callback) {
                         dashboardDb.findAll('bug-count-issues', function(bugs){
                             bugsCount = bugs[0];
-                            io.emit('init-all', {
-                                "chart": formatedChartData,
-                                "burndown": formatedBurndownData,
-                                "bugs": bugsCount
-                            });
+                            socket.emit('update-bugs', bugsCount);
+                            socket.emit('update-burndown', formatedBurndownData);
+                            socket.emit('update-chart', formatedChartData);
+
                             callback();
                         });
                     }

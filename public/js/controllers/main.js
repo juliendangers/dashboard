@@ -9,8 +9,8 @@
  */
 angular.module('dashboardApp')
   .controller('MainCtrl', function ($scope, c3SimpleService, socket) {
-        $scope.dataTest = {};
-        $scope.datachart = {};
+        $scope.dataBurndown = {};
+        $scope.dataChart = {};
 
         $scope.transform = function(chartId, serie) {
             c3SimpleService['#' + chartId].transform($scope.chartType[serie], serie);
@@ -21,7 +21,7 @@ angular.module('dashboardApp')
                 bindto: '#burndown',
                 data: {
                     x: 'x',
-                    json: $scope.dataTest,
+                    json: $scope.dataBurndown,
                     columns: []
                 },
                 color: {
@@ -56,7 +56,7 @@ angular.module('dashboardApp')
                 bindto: '#chart',
                 data: {
                     x: 'x',
-                    json: $scope.datachart,
+                    json: $scope.dataChart,
                     type: 'bar',
                     colors: {
                         '_id': '#3C3D42',
@@ -87,20 +87,28 @@ angular.module('dashboardApp')
         };
 
         socket.on('init-all', function (data) {
-            $scope.datachart = data.chart;
-            $scope.dataTest = data.burndown;
+            $scope.dataChart = data.chart;
+            $scope.dataBurndown = data.burndown;
             $scope.bugs = data.bugs;
         });
 
-        socket.on('init-bugs', function (data) {
-            $scope.bugs = data[0];
+        socket.on('update-bugs', function (data) {
+            $scope.bugs = data;
         });
 
-        $scope.$watch('datachart', function(newSeries, oldSeries) {
+        socket.on('update-burndown', function (data) {
+            $scope.dataBurndown = data;
+        });
+
+        socket.on('update-chart', function (data) {
+            $scope.dataChart = data;
+        });
+
+        $scope.$watch('dataChart', function(newSeries, oldSeries) {
             c3SimpleService[$scope.chart.bindto] = c3.generate(setChart());
         });
 
-        $scope.$watch('dataTest', function(newSeries, oldSeries) {
+        $scope.$watch('dataBurndown', function(newSeries, oldSeries) {
             c3SimpleService[$scope.burndown.bindto] = c3.generate(setBurndown());
         });
 
