@@ -116,9 +116,6 @@ new CronJob('45 * * * * *', function() {
                 dashboardDb.findAll('active-sprint-issues', function(issues) {
                     // Update burndown et chart data
                     async.waterfall([
-                        function (callback) {
-
-                        },
                         function (issues, callback) {
                             dashboardDb.findAll('burndown', function(burndowns) {
                                 callback(null, issues, burndowns);
