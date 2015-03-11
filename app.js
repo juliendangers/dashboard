@@ -6,6 +6,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var async = require('async');
+var assert = require('assert');
 
 var env = require('node-env-file');
 env(__dirname + '/.env');
@@ -14,7 +15,7 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-var issues = require('./modules/issues');
+var issuesApi = require('./modules/issuesApi');
 var dashboardDb = require('./modules/dashboardDb');
 var dataFormater = require('./modules/dataFormater');
 
@@ -38,6 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', routes);
 app.use('/users', users);
 
+// Init all chart on connection
 io.on('connection', function(socket) {
     console.log('A user connected');
 
@@ -81,13 +83,13 @@ io.on('connection', function(socket) {
     });
 });
 
+// Declare all cronjobs
 var CronJob = require('cron').CronJob;
 new CronJob('45 * * * * *', function() {
 
     var JiraApi = require('./modules/jira').JiraApi;
     var _ = require('lodash');
     var jira = new JiraApi('https', process.env.JIRA_HOST, '443', process.env.JIRA_USER, process.env.JIRA_PASSWORD, 2);
-    var assert = require('assert');
     var env = require('node-env-file');
 
     var options = {
@@ -95,139 +97,80 @@ new CronJob('45 * * * * *', function() {
     };
 
     // Get bug issues from JIRA, add them into mongo and refresh all dashboards
-    dashboardDb.removeAll('bug-count-issues', function(){
-        issues.getBugIssues(function(data) {
+    dashboardDb.removeAll('bug-count-issues', function() {
+        apiRequests.getBugIssues(function(data) {
             dashboardDb.insert('bug-count-issues', data);
             io.sockets.emit('update-bugs', data);
         });
     });
 
-    // Update
-    dashboardDb.removeAll('active-sprint-issues', function(result){
-        jira.getSprintsForRapidView(4, function(error, sprints) {
-            assert.equal(error, null);
+    // Update issues
+    dashboardDb.removeAll('active-sprint-issues', function(err){
+        assert.equal(null, err);
 
-            var sprint;
-            sprints.forEach(function(sprint){
-                if (sprint.state == 'ACTIVE') {
-                    var sprintName = 'UNKNOWN';
+        issuesApi.getActiveSprintIssues(function(err, issues) {
+            assert.equal(null, err);
 
-                    if (_.includes(sprint.name, 'DEV')) {
-                        sprintName = 'DEV';
-                    } else if (_.includes(sprint.name, 'UX')) {
-                        sprintName = 'UX';
-                    } else if (_.includes(sprint.name, 'LIVE')) {
-                        sprintName = 'LIVE';
-                    }
-                    assert.equal(error, null);
-
-                    jira.searchJira('Sprint=' + sprint.id, options, function (error, searchResult) {
-                        assert.equal(error, null);
-                        
-                        searchResult.issues.forEach(function (issueDetail) {
-                            var formattedIssue = {
-                                id: issueDetail.key,
-                                type: issueDetail.fields.issuetype.name.toUpperCase(),
-                                timeSpent: issueDetail.fields.timespent || 0,
-                                project: issueDetail.fields.project.key,
-                                status: issueDetail.fields.status.statusCategory.name.replace(' ', '_').toUpperCase(),
-                                originalEstimate: issueDetail.fields.aggregatetimeoriginalestimate || 0,
-                                remainingEstimate: issueDetail.fields.timeestimate, // Voir progress plutot que timetracking
-                                sprint: sprintName
-                            };
-
-                            dashboardDb.insert('active-sprint-issues', [formattedIssue]);
-                        });
-                    });
-                }
-            });
-
-            jira.getSprintsForRapidView(31, function(error, itSprints) {
-                itSprints.forEach(function(ITsprint) {
-                    if (ITsprint.state == 'ACTIVE') {
-                        jira.searchJira('Sprint=' + ITsprint.id, options, function (error, searchResult) {
-                            assert.equal(error, null);
-
-                            searchResult.issues.forEach(function (itIssueDetail) {
-                                var itFormattedIssue = {
-                                    id: itIssueDetail.key,
-                                    type: itIssueDetail.fields.issuetype.name.toUpperCase(),
-                                    timeSpent: itIssueDetail.fields.timespent || 0,
-                                    project: itIssueDetail.fields.project.key,
-                                    status: itIssueDetail.fields.status.statusCategory.name.replace(' ', '_').toUpperCase(),
-                                    originalEstimate: itIssueDetail.fields.aggregatetimeoriginalestimate || 0,
-                                    remainingEstimate: itIssueDetail.fields.timeestimate, // Voir progress plutot que timetracking
-                                    sprint: 'IT'
-                                };
-
-                                dashboardDb.insert('active-sprint-issues', [itFormattedIssue]);
-                            });
-                        });
-                    }
-                });
-
-
+            dashboardDb.insert('active-sprint-issues', issues, function() {
                 // Update all charts
                 dashboardDb.findAll('active-sprint-issues', function(issues) {
+                    // Update burndown et chart data
+                    async.waterfall([
+                        function (callback) {
 
-                });
+                        },
+                        function (issues, callback) {
+                            dashboardDb.findAll('burndown', function(burndowns) {
+                                callback(null, issues, burndowns);
+                            });
+                        },
+                        function (issues, burndowns, callback) {
+                            var previousFormatedData = burndowns ? burndowns[0] : [];
 
-                // Update burndown et chart data
-                async.waterfall([
-                    function (callback) {
+                            dataFormater.formatBurndown(issues, previousFormatedData, function(formatedBurndownData) {
+                                callback(null, burndowns, formatedBurndownData);
+                            });
+                        },
+                        function (issues, burndowns, formatedBurndownData, callback) {
+                            dashboardDb.removeAll('burndown', function(){
+                                callback(null, issues, burndowns, formatedBurndownData);
+                            });
+                        },
+                        function (issues, burndowns, formatedBurndownData, callback) {
+                            dashboardDb.insert('burndown', [formatedBurndownData], function() {
+                                callback(null, issues, burndowns, formatedBurndownData);
+                            });
+                        },
+                        function (issues, burndowns, formatedBurndownData, callback) {
+                            dataFormater.formatChart(issues, function(formatedChartData) {
+                                callback(null, formatedBurndownData, formatedChartData);
+                            });
+                        },
+                        function (formatedBurndownData, formatedChartData, callback) {
+                            dashboardDb.removeAll('chart', function() {
+                                callback(null, formatedBurndownData, formatedChartData);
+                            });
+                        },
+                        function (formatedBurndownData, formatedChartData, callback) {
+                            dashboardDb.insert('chart', [formatedChartData], function() {
+                                callback(null, formatedBurndownData, formatedChartData);
+                            });
+                        },
+                        function (formatedBurndownData, formatedChartData, callback) {
+                            dashboardDb.findAll('bug-count-issues', function(bugs){
+                                bugsCount = bugs[0];
+                                socket.emit('update-bugs', bugsCount);
+                                socket.emit('update-burndown', formatedBurndownData);
+                                socket.emit('update-chart', formatedChartData);
 
-                    },
-                    function (issues, callback) {
-                        dashboardDb.findAll('burndown', function(burndowns) {
-                            callback(null, issues, burndowns);
-                        });
-                    },
-                    function (issues, burndowns, callback) {
-                        var previousFormatedData = burndowns ? burndowns[0] : [];
-
-                        dataFormater.formatBurndown(issues, previousFormatedData, function(formatedBurndownData) {
-                            callback(null, burndowns, formatedBurndownData);
-                        });
-                    },
-                    function (issues, burndowns, formatedBurndownData, callback) {
-                        dashboardDb.removeAll('burndown', function(){
-                            callback(null, issues, burndowns, formatedBurndownData);
-                        });
-                    },
-                    function (issues, burndowns, formatedBurndownData, callback) {
-                        dashboardDb.insert('burndown', [formatedBurndownData], function() {
-                            callback(null, issues, burndowns, formatedBurndownData);
-                        });
-                    },
-                    function (issues, burndowns, formatedBurndownData, callback) {
-                        dataFormater.formatChart(issues, function(formatedChartData) {
-                            callback(null, formatedBurndownData, formatedChartData);
-                        });
-                    },
-                    function (formatedBurndownData, formatedChartData, callback) {
-                        dashboardDb.removeAll('chart', function() {
-                            callback(null, formatedBurndownData, formatedChartData);
-                        });
-                    },
-                    function (formatedBurndownData, formatedChartData, callback) {
-                        dashboardDb.insert('chart', [formatedChartData], function() {
-                            callback(null, formatedBurndownData, formatedChartData);
-                        });
-                    },
-                    function (formatedBurndownData, formatedChartData, callback) {
-                        dashboardDb.findAll('bug-count-issues', function(bugs){
-                            bugsCount = bugs[0];
-                            socket.emit('update-bugs', bugsCount);
-                            socket.emit('update-burndown', formatedBurndownData);
-                            socket.emit('update-chart', formatedChartData);
-
-                            callback();
-                        });
-                    }
-                ], function (err) {
-                    if (err) {
-                        console.error(err);
-                    }
+                                callback();
+                            });
+                        }
+                    ], function (err) {
+                        if (err) {
+                            console.error(err);
+                        }
+                    });
                 });
             });
         });
