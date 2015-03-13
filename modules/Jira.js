@@ -428,7 +428,6 @@ var JiraApi = exports.JiraApi = function(protocol, host, port, username, passwor
                 callback(null, response.body.sprints);
                 return;
             }
-
         });
     };
 
