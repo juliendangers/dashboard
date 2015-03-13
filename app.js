@@ -135,6 +135,7 @@ new CronJob('45 * * * * *', function() {
                         },
                         function (issues, burndowns, formatedBurndownData, callback) {
                             dashboardDb.insert('burndown', [formatedBurndownData], function() {
+                                socket.emit('update-burndown', formatedBurndownData);
                                 callback(null, issues, burndowns, formatedBurndownData);
                             });
                         },
@@ -150,19 +151,10 @@ new CronJob('45 * * * * *', function() {
                         },
                         function (formatedBurndownData, formatedChartData, callback) {
                             dashboardDb.insert('chart', [formatedChartData], function() {
+                                socket.emit('update-chart', formatedChartData);
                                 callback(null, formatedBurndownData, formatedChartData);
                             });
                         },
-                        function (formatedBurndownData, formatedChartData, callback) {
-                            dashboardDb.findAll('bug-count-issues', function(bugs){
-                                bugsCount = bugs[0];
-                                socket.emit('update-bugs', bugsCount);
-                                socket.emit('update-burndown', formatedBurndownData);
-                                socket.emit('update-chart', formatedChartData);
-
-                                callback();
-                            });
-                        }
                     ], function (err) {
                         if (err) {
                             console.error(err);
