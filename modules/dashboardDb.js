@@ -55,6 +55,12 @@ var findAll = function(collectionName, callback) {
     });
 };
 
+/**
+ * Remove all element from collection
+ *
+ * @param {string} collectionName
+ * @param {function} callback
+ */
 var removeAll = function(collectionName, callback) {
     MongoClient.connect(url, function(err, db) {
         assert.equal(null, err);
@@ -62,7 +68,7 @@ var removeAll = function(collectionName, callback) {
         // Get the documents collection
         var collection = db.collection(collectionName);
 
-        // Find some documents
+        // Remove all documents
         collection.remove({}, function(err, result) {
             assert.equal(null, err);
 

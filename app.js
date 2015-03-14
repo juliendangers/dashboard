@@ -85,7 +85,7 @@ io.on('connection', function(socket) {
 
 // Declare all cronjobs
 var CronJob = require('cron').CronJob;
-new CronJob('45 * * * * *', function() {
+new CronJob('15 * * * * *', function() {
 
     var JiraApi = require('./modules/jira').JiraApi;
     var _ = require('lodash');
@@ -98,7 +98,7 @@ new CronJob('45 * * * * *', function() {
 
     // Get bug issues from JIRA, add them into mongo and refresh all dashboards
     dashboardDb.removeAll('bug-count-issues', function() {
-        apiRequests.getBugIssues(function(data) {
+        issuesApi.getBugIssues(function(data) {
             dashboardDb.insert('bug-count-issues', data);
             io.sockets.emit('update-bugs', data);
         });
