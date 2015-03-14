@@ -1,9 +1,8 @@
-/**
- * Created by Guillaume-Idz on 05/03/15.
- */
 var moment = require('moment');
-var JiraApi = require('../modules/jira').JiraApi;
 var assert = require('assert');
+var _ = require('lodash');
+
+var JiraApi = require('../modules/jira').JiraApi;
 
 /**
  * List all bug issues
@@ -42,6 +41,10 @@ var getActiveSprintIssues = function(callback) {
     var jira = new JiraApi('https', process.env.JIRA_HOST, '443', process.env.JIRA_USER, process.env.JIRA_PASSWORD, 2);
 
     var allIssues = [];
+    var options = {
+        "maxResults" : 500
+    };
+
     jira.getSprintsForRapidView(4, function (err, sprints) {
         assert.equal(err, null);
 

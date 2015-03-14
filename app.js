@@ -86,7 +86,7 @@ io.on('connection', function(socket) {
 
 // Declare all cronjobs
 var CronJob = require('cron').CronJob;
-new CronJob('30 * * * * *', function() {
+new CronJob('03 * * * * *', function() {
     // Get bug issues from JIRA, add them into mongo and refresh all dashboards
     dashboardDb.removeAll('bug-count-issues', function() {
         issuesApi.getBugIssues(function(data) {
@@ -101,7 +101,7 @@ new CronJob('30 * * * * *', function() {
 
         issuesApi.getActiveSprintIssues(function(err, issues) {
             assert.equal(null, err);
-console.log(issues);
+
             dashboardDb.insert('active-sprint-issues', issues, function() {
                 // Update all charts
                 dashboardDb.findAll('active-sprint-issues', function(issues) {

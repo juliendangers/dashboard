@@ -49,7 +49,7 @@ var findAll = function(collectionName, callback) {
             assert.equal(null, err);
 
             if (callback) {
-                callback(result);
+                callback(err, result);
             }
         });
     });
