@@ -13,7 +13,7 @@ var insert = function(collectionName, array, callback) {
         // Insert some documents
         collection.insert(array, function(err, result) {
             if (callback) {
-                callback(err, result);
+                callback(result);
             }
         });
 
@@ -49,7 +49,7 @@ var findAll = function(collectionName, callback) {
             assert.equal(null, err);
 
             if (callback) {
-                callback(err, result);
+                callback(result);
             }
         });
     });
@@ -73,7 +73,7 @@ var removeAll = function(collectionName, callback) {
             assert.equal(null, err);
 
             if (callback) {
-                callback(err, result);
+                callback(result);
             }
         });
     });

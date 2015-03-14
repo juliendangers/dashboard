@@ -15,7 +15,7 @@ var getBugIssues = function(callback) {
     var fr = moment().locale('fr');
     var now = fr.format('YYYY-MM-DD HH:mm:ss'); // YYYY-MM-DD
 
-    //Compte le nombre de bug dans le backlog pour le jour now()
+    // Compte le nombre de bug dans le backlog pour le jour now()
     var count = 0;
     var data = [];
 

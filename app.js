@@ -86,7 +86,7 @@ io.on('connection', function(socket) {
 
 // Declare all cronjobs
 var CronJob = require('cron').CronJob;
-new CronJob('03 * * * * *', function() {
+new CronJob('25 * * * * *', function() {
     // Get bug issues from JIRA, add them into mongo and refresh all dashboards
     dashboardDb.removeAll('bug-count-issues', function() {
         issuesApi.getBugIssues(function(data) {
@@ -96,14 +96,12 @@ new CronJob('03 * * * * *', function() {
     });
 
     // Update issues
-    dashboardDb.removeAll('active-sprint-issues', function(err) {
-        assert.equal(null, err);
-
+    dashboardDb.removeAll('active-sprint-issues', function() {
         issuesApi.getActiveSprintIssues(function(err, issues) {
             assert.equal(null, err);
 
-            dashboardDb.insert('active-sprint-issues', issues, function(err, issues) {
-                // Update burndown et chart data
+            dashboardDb.insert('active-sprint-issues', issues, function(issues) {
+                // Update burndown and chart data
                 async.waterfall([
                     function (callback) {
                         dashboardDb.findAll('burndown', function(burndowns) {
@@ -111,20 +109,21 @@ new CronJob('03 * * * * *', function() {
                         });
                     },
                     function (issues, burndowns, callback) {
-                        var previousFormatedData = burndowns ? burndowns[0] : [];
+                        var previousFormatedData = burndowns.length > 0 ? burndowns[0] : [];
 
                         dataFormater.formatBurndown(issues, previousFormatedData, function(formatedBurndownData) {
-                            callback(null, burndowns, formatedBurndownData);
+                            callback(null, issues, burndowns, formatedBurndownData);
                         });
                     },
                     function (issues, burndowns, formatedBurndownData, callback) {
-                        dashboardDb.removeAll('burndown', function(){
+
+                        dashboardDb.removeAll('burndown', function() {
                             callback(null, issues, burndowns, formatedBurndownData);
                         });
                     },
                     function (issues, burndowns, formatedBurndownData, callback) {
                         dashboardDb.insert('burndown', [formatedBurndownData], function() {
-                            socket.emit('update-burndown', formatedBurndownData);
+                            io.sockets.emit('update-burndown', formatedBurndownData);
                             callback(null, issues, burndowns, formatedBurndownData);
                         });
                     },
@@ -140,8 +139,8 @@ new CronJob('03 * * * * *', function() {
                     },
                     function (formatedBurndownData, formatedChartData, callback) {
                         dashboardDb.insert('chart', [formatedChartData], function() {
-                            socket.emit('update-chart', formatedChartData);
-                            callback(null, formatedBurndownData, formatedChartData);
+                            io.sockets.emit('update-chart', formatedChartData);
+                            callback(null);
                         });
                     }
                 ], function (err) {
