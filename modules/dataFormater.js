@@ -25,7 +25,7 @@ var formatBurndown = function (dataToFormat, oldDataFormated, callback) {
                 "Thursday",
                 "Friday"
             ],
-            "base": [350, 311, 272, 233, 194, 194, 194, 156, 117, 78, 39, 0],
+            "base": [350, 311, 272, 233, 194, 194, 194, 156, 117, 78, 39, 0, 0, 0],
             "UX"  : [],
             "DEV" : [],
             "LIVE": [],
@@ -43,7 +43,7 @@ var formatBurndown = function (dataToFormat, oldDataFormated, callback) {
     }).value());
 
     // calcul de la base
-    var diff = Math.round(maxTotalOriginalEstimate / 12);
+    var diff = Math.round(maxTotalOriginalEstimate / 14);
     var base = [];
     base.push(maxTotalOriginalEstimate - diff);
 
