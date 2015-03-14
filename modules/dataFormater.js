@@ -8,8 +8,11 @@ var _ = require('lodash');
  * @param callback
  */
 var formatBurndown = function (dataToFormat, oldDataFormated, callback) {
+
+    var formatedData;
+
     if (!oldDataFormated || !oldDataFormated.DEV || oldDataFormated.UX.length == 10) {
-        var formatedData = {
+        formatedData = {
             "x"   : [
                 "Monday",
                 "Tuesday",
@@ -47,7 +50,6 @@ var formatBurndown = function (dataToFormat, oldDataFormated, callback) {
     for (var i = 1; i < 14; ++i) {
         base.push(base[i - 1] - diff);
     }
-    ;
 
     formatedData.base = base;
 
