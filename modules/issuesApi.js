@@ -20,8 +20,8 @@ var getBugIssues = function(callback) {
     var count = 0;
     var data = [];
 
-    jira.searchJira('issuetype=Bug&status!=resolved&status!=closed&labels != poney', {maxResults: 500}, function(error, result) {
-        assert.equal(error, null);
+    jira.searchJira('issuetype=Bug&status!=resolved&status!=closed&labels != poney', {maxResults: 500}, function(err, result) {
+        assert.equal(err, null);
         count = result.issues.length;
 
         data.push({
@@ -39,12 +39,12 @@ var getBugIssues = function(callback) {
  * @param callback
  */
 var getActiveSprintIssues = function(callback) {
-    var allIssues = [];
-    var err;
-    jira.getSprintsForRapidView(4, function (error, sprints) {
-        assert.equal(error, null);
+    var jira = new JiraApi('https', process.env.JIRA_HOST, '443', process.env.JIRA_USER, process.env.JIRA_PASSWORD, 2);
 
-        var sprint;
+    var allIssues = [];
+    jira.getSprintsForRapidView(4, function (err, sprints) {
+        assert.equal(err, null);
+
         sprints.forEach(function (sprint) {
             if (sprint.state == 'ACTIVE') {
                 var sprintName = 'UNKNOWN';
@@ -56,10 +56,10 @@ var getActiveSprintIssues = function(callback) {
                 } else if (_.includes(sprint.name, 'LIVE')) {
                     sprintName = 'LIVE';
                 }
-                assert.equal(error, null);
+                assert.equal(err, null);
 
-                jira.searchJira('Sprint=' + sprint.id, options, function (error, searchResult) {
-                    assert.equal(error, null);
+                jira.searchJira('Sprint=' + sprint.id, options, function (err, searchResult) {
+                    assert.equal(err, null);
 
                     searchResult.issues.forEach(function (issueDetail) {
                         var formatedIssue = {
@@ -78,11 +78,11 @@ var getActiveSprintIssues = function(callback) {
             }
         });
 
-        jira.getSprintsForRapidView(31, function (error, itSprints) {
+        jira.getSprintsForRapidView(31, function (err, itSprints) {
             itSprints.forEach(function (ITsprint) {
                 if (ITsprint.state == 'ACTIVE') {
-                    jira.searchJira('Sprint=' + ITsprint.id, options, function (error, searchResult) {
-                        assert.equal(error, null);
+                    jira.searchJira('Sprint=' + ITsprint.id, options, function (err, searchResult) {
+                        assert.equal(err, null);
 
                         searchResult.issues.forEach(function (itIssueDetail) {
                             var formatedIssue = {

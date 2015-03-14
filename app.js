@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var async = require('async');
 var assert = require('assert');
+var _ = require('lodash');
 
 var env = require('node-env-file');
 env(__dirname + '/.env');
@@ -85,17 +86,7 @@ io.on('connection', function(socket) {
 
 // Declare all cronjobs
 var CronJob = require('cron').CronJob;
-new CronJob('15 * * * * *', function() {
-
-    var JiraApi = require('./modules/jira').JiraApi;
-    var _ = require('lodash');
-    var jira = new JiraApi('https', process.env.JIRA_HOST, '443', process.env.JIRA_USER, process.env.JIRA_PASSWORD, 2);
-    var env = require('node-env-file');
-
-    var options = {
-        maxResults: 500
-    };
-
+new CronJob('30 * * * * *', function() {
     // Get bug issues from JIRA, add them into mongo and refresh all dashboards
     dashboardDb.removeAll('bug-count-issues', function() {
         issuesApi.getBugIssues(function(data) {
@@ -105,12 +96,12 @@ new CronJob('15 * * * * *', function() {
     });
 
     // Update issues
-    dashboardDb.removeAll('active-sprint-issues', function(err){
+    dashboardDb.removeAll('active-sprint-issues', function(err) {
         assert.equal(null, err);
 
         issuesApi.getActiveSprintIssues(function(err, issues) {
             assert.equal(null, err);
-
+console.log(issues);
             dashboardDb.insert('active-sprint-issues', issues, function() {
                 // Update all charts
                 dashboardDb.findAll('active-sprint-issues', function(issues) {
