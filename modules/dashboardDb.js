@@ -13,7 +13,7 @@ var insert = function(collectionName, array, callback) {
         // Insert some documents
         collection.insert(array, function(err, result) {
             if (callback) {
-                callback(result);
+                callback(err, result);
             }
         });
 
