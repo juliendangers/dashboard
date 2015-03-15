@@ -123,6 +123,7 @@ new CronJob('25 * * * * *', function() {
                     },
                     function (issues, burndowns, formatedBurndownData, callback) {
                         dashboardDb.insert('burndown', [formatedBurndownData], function() {
+                            delete formatedBurndownData._id;
                             io.sockets.emit('update-burndown', formatedBurndownData);
                             callback(null, issues, burndowns, formatedBurndownData);
                         });
