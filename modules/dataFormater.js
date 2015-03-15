@@ -19,11 +19,15 @@ var formatBurndown = function (dataToFormat, oldDataFormated, callback) {
                 "Wednesday",
                 "Thursday",
                 "Friday",
+                "Saturday",
+                "Sunday",
                 "Monday",
                 "Tuesday",
                 "Wednesday",
                 "Thursday",
-                "Friday"
+                "Friday",
+                "Saturday",
+                "Sunday"
             ],
             "base": [350, 311, 272, 233, 194, 194, 194, 156, 117, 78, 39, 0, 0, 0],
             "UX"  : [],
@@ -31,36 +35,33 @@ var formatBurndown = function (dataToFormat, oldDataFormated, callback) {
             "LIVE": [],
             "IT"  : []
         };
+        // calculate first remaining estimate
+
+
     } else {
         formatedData = oldDataFormated;
     }
 
     // Get maxTotalOriginalEstimate
-    var maxTotalOriginalEstimate = _.max(_.chain(dataToFormat).groupBy('sprint').map(function (item) {
-        return item.reduce(function (prev, current) {
+    _.chain(dataToFormat).groupBy('sprint').map(function (item) {
+
+        var maxTotalOriginalEstimate = item.reduce(function (prev, current) {
             return prev + _.parseInt(current.originalEstimate);
         }, 0);
-    }).value());
 
-    // calcul de la base
-    var diff = Math.round(maxTotalOriginalEstimate / 14);
-    var base = [];
-    base.push(maxTotalOriginalEstimate - diff);
-
-    for (var i = 1; i < 14; ++i) {
-        base.push(base[i - 1] - diff);
-    }
-
-    formatedData.base = base;
-
-    // get maxTotalremainingEstimate
-    _.chain(dataToFormat).groupBy('sprint').map(function (item) {
-        var data = {'sprint': item[0].sprint, 'totalRemainingEstimate': 0};
         var totalRemainingEstimate = item.reduce(function (prev, current) {
             return prev + _.parseInt(current.remainingEstimate);
         }, 0);
-        formatedData[data.sprint].push(totalRemainingEstimate);
+
+        totalRemainingEstimate = Math.round((totalRemainingEstimate * 350) / maxTotalOriginalEstimate);
+
+        debugger;
+
+        formatedData[item[0].sprint].push(totalRemainingEstimate);
+
     }).value();
+
+    debugger;
 
     callback(formatedData);
 };
