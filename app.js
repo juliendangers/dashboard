@@ -51,7 +51,7 @@ io.on('connection', function(socket) {
     });
 
     // Update burndown widget
-    dashboardDb.find('burndown', {}, function(burndownData) {
+    dashboardDb.findAll('burndown', {}, function(burndownData) {
         var burndownDefaultData = {
             "x":["Monday","Tuesday","Wednesday","Thursday","Friday","Monday","Tuesday","Wednesday","Thursday","Friday"],
             "base":[],
@@ -60,6 +60,8 @@ io.on('connection', function(socket) {
             "LIVE":[],
             "TOOLS":[]
         };
+
+
 
         burndownData = burndownData ? burndownData[0] : burndownDefaultData;
         socket.emit('update-burndown', burndownData);
@@ -104,24 +106,11 @@ new CronJob('25 * * * * *', function() {
                 // Update burndown and chart data
                 async.waterfall([
                     function (callback) {
-                        dashboardDb.findAll('burndown', function(burndowns) {
-                            callback(null, issues, burndowns);
+                        dataFormater.formatSingleDayBurndown(issues, function(formatedBurndownData) {
+                            callback(null, issues, formatedBurndownData);
                         });
                     },
-                    function (issues, burndowns, callback) {
-                        var previousFormatedData = burndowns.length > 0 ? burndowns[0] : [];
-
-                        dataFormater.formatBurndown(issues, previousFormatedData, function(formatedBurndownData) {
-                            callback(null, issues, burndowns, formatedBurndownData);
-                        });
-                    },
-                    function (issues, burndowns, formatedBurndownData, callback) {
-
-                        dashboardDb.removeAll('burndown', function() {
-                            callback(null, issues, burndowns, formatedBurndownData);
-                        });
-                    },
-                    function (issues, burndowns, formatedBurndownData, callback) {
+                    function (issues, formatedBurndownData, callback) {
                         dashboardDb.insert('burndown', [formatedBurndownData], function() {
                             io.sockets.emit('update-burndown', formatedBurndownData);
                             callback(null, issues, burndowns, formatedBurndownData);

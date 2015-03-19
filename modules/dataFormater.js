@@ -1,59 +1,40 @@
 var _ = require('lodash');
+var moment = require('moment');
 
 /**
  * Format burndown
  *
  * @param dataToFormat
- * @param oldDataFormated
  * @param callback
  */
-var formatBurndown = function (dataToFormat, oldDataFormated, callback) {
-    if (!oldDataFormated || !oldDataFormated.DEV || oldDataFormated.UX.length == 10) {
-        var formatedData = {
-            "x"   : [
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday",
-                "Monday",
-                "Tuesday",
-                "Wednesday",
-                "Thursday",
-                "Friday"
-            ],
-            "base": [350, 311, 272, 233, 194, 156, 117, 78, 39, 0],
-            "UX"  : [],
-            "DEV" : [],
-            "LIVE": [],
-            "IT"  : []
-        };
-    } else {
-        formatedData = oldDataFormated;
-    }
+var formatSingleDayBurndown = function (dataToFormat, callback) {
 
-    // Get maxTotalOriginalEstimate
+    var formatedToday = moment().format('YYYY-MM-DD');
+    console.log(formatedToday);
+
+    // Get maxTotalOriginalEstimate in all sprint
     var maxTotalOriginalEstimate = _.max(_.chain(dataToFormat).groupBy('sprint').map(function (item) {
         return item.reduce(function (prev, current) {
             return prev + _.parseInt(current.originalEstimate);
         }, 0);
     }).value());
 
-    // calcul de la base
-    var diff = Math.round(maxTotalOriginalEstimate / 14);
-    var base = [];
-    base.push(maxTotalOriginalEstimate - diff);
+    var formatedData = {
+        "MAX_ESTIMATE": maxTotalOriginalEstimate,
+        "UX"  : 0,
+        "DEV" : 0,
+        "LIVE": 0,
+        "IT"  : 0,
+        "DATE": formatedToday
+    };
 
-    for (var i = 1; i < 14; ++i) {
-        base.push(base[i - 1] - diff);
-    }
-    ;
 
-    formatedData.base = base;
-
-    // get maxTotalremainingEstimate
+    // Get maxTotalremainingEstimate for each sprint
     _.chain(dataToFormat).groupBy('sprint').map(function (item) {
-        var data = {'sprint': item[0].sprint, 'totalRemainingEstimate': 0};
+        var data = {
+            'sprint': item[0].sprint,
+            'totalRemainingEstimate': 0
+        };
         var totalRemainingEstimate = item.reduce(function (prev, current) {
             return prev + _.parseInt(current.remainingEstimate);
         }, 0);
@@ -63,13 +44,17 @@ var formatBurndown = function (dataToFormat, oldDataFormated, callback) {
     callback(formatedData);
 };
 
+var formatAllDayBurndown = function() {
+
+};
+
 var formatChart = function (dataToFormat, callback) {
     var chartData = {
         "x"   : ['TO DO', 'IN PROGRESS', 'CODE REVIEW', 'AWAITING QUALITY', 'DONE'],
-        'UX'  : [17, 4, 0, 0, 0, 5],
-        'DEV' : [41, 12, 4, 5, 0, 5],
-        'LIVE': [1, 0, 0, 0, 0, 0],
-        'IT'  : [3, 1, 1, 0, 1, 0]
+        'UX'  : [0, 0, 0, 0, 0, 0],
+        'DEV' : [0, 0, 0, 0, 0, 0],
+        'LIVE': [0, 0, 0, 0, 0, 0],
+        'IT'  : [0, 0, 0, 0, 0, 0]
     };
 
     _.chain(dataToFormat).groupBy('sprint').map(function (sprintIssues) {
@@ -105,5 +90,5 @@ var formatChart = function (dataToFormat, callback) {
     }
 };
 
-module.exports.formatBurndown = formatBurndown;
+module.exports.formatBurndown = formatSingleDayBurndown;
 module.exports.formatChart = formatChart;
