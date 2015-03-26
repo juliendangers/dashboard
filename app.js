@@ -11,7 +11,6 @@ var config = require('./config')(winston);
 
 var app = express();
 var http = require('http').Server(app);
-var io = require('socket.io')(http);
 
 var dashboardDb = require('./modules/dashboardDb')(config, winston);
 
@@ -64,5 +63,5 @@ app.use(function(err, req, res, next) {
 module.exports = app;
 
 http.listen(config.port, config.host, function () {
-    console.log('Server run in: http://' + config.host + ':' + config.port);
+  winston.info('Server run in: http://' + config.host + ':' + config.port);
 });

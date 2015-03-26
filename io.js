@@ -4,7 +4,7 @@ module.exports = function(http, dashboardDb, logger) {
 
     // Init all chart on connection
     io.on('connection', function(socket) {
-        logger.log('A user connected');
+        logger.info('A user connected');
 
         // Update bug count widget
         dashboardDb.find('bug-count-issues', {}, function(bugsCount) {
@@ -42,7 +42,7 @@ module.exports = function(http, dashboardDb, logger) {
         });
 
         socket.on('disconnect', function () {
-            logger.log('Client disconnected');
+            logger.info('Client disconnected');
         });
     });
 };
