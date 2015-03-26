@@ -1,19 +1,32 @@
+require('morgan');
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-var logger = require('morgan');
+var logger = require('winston');
 var config = require('./config')(console);
 var issuesApi = require('./modules/issuesApi')(config, logger);
 var dashboardDb = require('./modules/dashboardDb')(config, logger);
 
 var ioClient = require('socket.io-client')('http://' + config.host + ':' + config.port);
 
-ioClient.connect(function () {
+ioClient.on('connect', function () {
+    logger.info('Connexion to socket client.');
+
     // Get bug issues from JIRA, add them into mongo and refresh all dashboards
     dashboardDb.removeAll('bug-count-issues', function() {
         issuesApi.getBugIssues(function(data) {
             dashboardDb.insert('bug-count-issues', data);
-            io.sockets.emit('update-bugs', data);
+            ioClient.emit('broadcast', 'update-bugs', data[0]);
+            logger.info('update-bugs:', data);
+        });
+    });
+
+    // Get weekly bug issues from JIRA, add them into mongo and refresh all dashboards
+    dashboardDb.removeAll('bug-count-weekly-issues', function() {
+        issuesApi.getBugWeeklyIssues(function(data) {
+            dashboardDb.insert('bug-count-weekly-issues', data);
+            ioClient.emit('broadcast', 'update-bugs-weekly', data[0]);
+            logger.info('update-bugs-weekly:', data);
         });
     });
 

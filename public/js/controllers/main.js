@@ -11,6 +11,8 @@ angular.module('dashboardApp')
   .controller('MainCtrl', function ($scope, c3SimpleService, socket) {
         $scope.dataBurndown = {};
         $scope.dataChart = {};
+        $scope.bugs = {};
+        $scope.bugsWeekly = {};
 
         $scope.transform = function(chartId, serie) {
             c3SimpleService['#' + chartId].transform($scope.chartType[serie], serie);
@@ -90,10 +92,15 @@ angular.module('dashboardApp')
             $scope.dataChart = data.chart;
             $scope.dataBurndown = data.burndown;
             $scope.bugs = data.bugs;
+            $scope.bugsWeekly = data.bugsWeekly;
         });
 
         socket.on('update-bugs', function (data) {
             $scope.bugs = data;
+        });
+
+        socket.on('update-bugs-weekly', function (data) {
+            $scope.bugsWeekly = data;
         });
 
         socket.on('update-burndown', function (data) {
