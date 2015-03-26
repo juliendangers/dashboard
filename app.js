@@ -7,19 +7,13 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var winston = require('winston');
 
-var config = require('./config')(console);
+var config = require('./config')(winston);
 
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-var issuesApi = require('./modules/issuesApi')(config, logger);
-var dashboardDb = require('./modules/dashboardDb')(config, logger);
-var dataFormater = require('./modules/dataFormater');
-
-// Route setup
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var dashboardDb = require('./modules/dashboardDb')(config, winston);
 
 app.engine('ejs', engine);
 
