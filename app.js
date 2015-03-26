@@ -7,16 +7,13 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var winston = require('winston');
 
-var env = require('node-env-file');
-env(__dirname + '/.env');
+var config = require('./config')(winston);
 
 var app = express();
 var http = require('http').Server(app);
+var io = require('socket.io')(http);
 
-var issuesApi = require('./modules/issuesApi');
-var dashboardDb = require('./modules/dashboardDb');
-var dataFormater = require('./modules/dataFormater');
-
+var dashboardDb = require('./modules/dashboardDb')(config, winston);
 
 app.engine('ejs', engine);
 
@@ -66,6 +63,6 @@ app.use(function(err, req, res, next) {
 
 module.exports = app;
 
-http.listen(8080, "127.0.0.1", function () {
-    console.log('Example app listening on port 8080');
+http.listen(config.port, config.host, function () {
+    console.log('Server run in: http://' + config.host + ':' + config.port);
 });
