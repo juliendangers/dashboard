@@ -34,11 +34,46 @@ module.exports = function (config, logger) {
     };
 
     /**
+     * List all bug weekly issues
+     *
+     * @param callback
+     */
+    var getBugWeeklyIssues = function(callback) {
+        var jira = new JiraApi('https', config.jira.host, config.jira.port, config.jira.user, config.jira.password, 2);
+
+        var fr = moment().locale('fr');
+        var now = fr.format('YYYY-MM-DD HH:mm:ss'); // YYYY-MM-DD
+        var week = fr.week();
+        var data = [];
+
+        jira.searchJira('issuetype = Bug AND resolutiondate >= startOfWeek() AND resolutiondate < endOfWeek() AND status = Resolved', {maxResults: 500}, function(err, result) {
+            assert.equal(err, null);
+            countDone = result.issues.length;
+
+            jira.searchJira('project = IDZ AND issuetype = Bug AND createdDate >= startOfWeek() AND createdDate < endOfWeek()', {maxResults: 500}, function(err, result) {
+                assert.equal(err, null);
+                countNotDone = result.issues.length;
+
+                data.push({
+                    done: countDone,
+                    notDone: countNotDone,
+                    date: now,
+                    week: week
+                });
+
+                callback(data);
+            });
+        });
+    };
+
+    /**
      * Get all issues from all sprint and projects
      *
      * @param callback
      */
     var getActiveSprintIssues = function(callback) {
+        return; // @todo Temporary shutdown bad function
+
         var jira = new JiraApi('https', config.jira.host, config.jira.port, config.jira.user, config.jira.password, 2);
 
         var allIssues = [];
@@ -112,6 +147,7 @@ module.exports = function (config, logger) {
 
     return {
         "getBugIssues": getBugIssues,
+        "getBugWeeklyIssues": getBugWeeklyIssues,
         "getActiveSprintIssues": getActiveSprintIssues
     }
 };

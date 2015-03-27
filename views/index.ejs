@@ -42,11 +42,11 @@
 					<div class="hd">Bugs this week</div>
 					<div class="bd wrapper">
 						<div class="left">
-							<p><span>8</span></p>
+							<p><span>{{ bugsWeekly.done || "–" }}</span></p>
 							<p>Done</p>
 						</div>
 						<div class="right">
-							<p><span>5</span></p>
+							<p><span>{{ bugsWeekly.notDone || "–" }}</span></p>
 							<p>New</p>
 						</div>
 					</div>
