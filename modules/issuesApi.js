@@ -72,7 +72,7 @@ module.exports = function (config, logger) {
      * @param callback
      */
     var getActiveSprintIssues = function(callback) {
-        return;
+        return; // @todo Temporary shutdown bad function
 
         var jira = new JiraApi('https', config.jira.host, config.jira.port, config.jira.user, config.jira.password, 2);
 
