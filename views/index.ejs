@@ -41,11 +41,11 @@
 				<div class="block bugsWeek">
 					<div class="hd">Bugs this week</div>
 					<div class="bd wrapper">
-						<div class="left">
+						<div class="left" ng-cloak>
 							<p><span>{{ bugsWeekly.done || "–" }}</span></p>
 							<p>Done</p>
 						</div>
-						<div class="right">
+						<div class="right" ng-cloak>
 							<p><span>{{ bugsWeekly.notDone || "–" }}</span></p>
 							<p>New</p>
 						</div>
@@ -54,14 +54,12 @@
 			</div>
 			<div class="four columns">
 				<div class="block">
-					<div class="hd">Projets</div>
+					<div class="hd">Projects</div>
 					<div class="bd">
-						<ul class="projectList">
-							<li>Community <span>40%</span></li>
-							<li>NeoStats <span>80%</span></li>
-							<li>Genius Answers <span>95%</span></li>
-							<li>Performance survey <span>40%</span></li>
-							<li>Genius Insights <span>20%</span></li>
+						<ul class="projectList" ng-cloak>
+							<li ng-repeat="project in projects | limitTo:5">
+								{{ project.name }} {{ project.duedate }} <span>{{ project.achievement }}%</span>
+							</li>
 						</ul>
 					</div>
 				</div>
