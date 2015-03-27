@@ -30,6 +30,15 @@ ioClient.on('connect', function () {
         });
     });
 
+    // Get projects from JIRA, add them into mongo and refresh all dashboards
+    dashboardDb.removeAll('projects', function() {
+        issuesApi.getProjects(function(projects) {
+            dashboardDb.insert('projects', projects);
+            ioClient.emit('broadcast', 'update-projects', projects);
+            logger.info('update-projects:', projects);
+        });
+    });
+
     // Update issues
     dashboardDb.removeAll('active-sprint-issues', function() {
         issuesApi.getActiveSprintIssues(function(err, issues) {

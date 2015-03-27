@@ -18,6 +18,13 @@ module.exports = function(http, dashboardDb, logger) {
         });
     };
 
+    // Update projects widget
+    var updateProjects = function (socket) {
+        dashboardDb.find('projects', {}, function (projects) {
+            socket.emit('update-projects', projects ? projects : {});
+        });
+    };
+
     // Update burndown chart widget
     var updateBurndownChartWidget = function (socket) {
         dashboardDb.find('burndown', {}, function (burndownData) {
@@ -68,6 +75,7 @@ module.exports = function(http, dashboardDb, logger) {
         // Init
         updateBugCountWidget(socket);
         updateBugWeeklyCountWidget(socket);
+        updateProjects(socket);
         updateBurndownChartWidget(socket);
         updateIssuesChartWidget(socket);
     });

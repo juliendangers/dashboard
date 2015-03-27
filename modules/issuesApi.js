@@ -66,6 +66,25 @@ module.exports = function (config, logger) {
         });
     };
 
+    var getProjects = function (callback) {
+        var jira = new JiraApi('https', config.jira.host, config.jira.port, config.jira.user, config.jira.password, 2);
+        var query = 'issuetype = Epic AND labels in (onDashboard) AND "Epic Status" != "done" ORDER BY duedate ASC';
+
+        jira.searchJira(query, {maxResults: 500}, function (err, result) {
+            assert.equal(err, null);
+
+            var data = _.map(result.issues, function (issue) {
+                return {
+                    name: issue.fields.customfield_10009,
+                    duedate: issue.fields.duedate,
+                    achievement: issue.fields.progress.percent ? issue.fields.progress.percent : 0,
+                };
+            });
+
+            callback(data);
+        });
+    };
+
     /**
      * Get all issues from all sprint and projects
      *
@@ -148,6 +167,7 @@ module.exports = function (config, logger) {
     return {
         "getBugIssues": getBugIssues,
         "getBugWeeklyIssues": getBugWeeklyIssues,
+        "getProjects": getProjects,
         "getActiveSprintIssues": getActiveSprintIssues
     }
 };
