@@ -78,7 +78,7 @@ module.exports = function (config, logger) {
                     name: issue.fields.customfield_10009,
                     duedate: issue.fields.duedate,
                     achievement: issue.fields.progress.percent ? issue.fields.progress.percent : 0,
-                }
+                };
             });
 
             callback(data);
