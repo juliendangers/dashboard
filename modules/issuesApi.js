@@ -1,6 +1,7 @@
 var moment = require('moment');
 var assert = require('assert');
 var _ = require('lodash');
+var async = require('async');
 
 module.exports = function (config, logger) {
     var JiraApi = require('../modules/jira').JiraApi;
@@ -91,74 +92,70 @@ module.exports = function (config, logger) {
      * @param callback
      */
     var getActiveSprintIssues = function(callback) {
-        return; // @todo Temporary shutdown bad function
-
         var jira = new JiraApi('https', config.jira.host, config.jira.port, config.jira.user, config.jira.password, 2);
 
         var allIssues = [];
         var options = {
-            "maxResults" : 500
+            "maxResults" : 700
         };
+
+        function getSprintName(sprint) {
+            var sprintName = 'UNKNOWN';
+
+            if (_.includes(sprint.name, 'DEV')) {
+                sprintName = 'DEV';
+            } else if (_.includes(sprint.name, 'UX')) {
+                sprintName = 'UX';
+            } else if (_.includes(sprint.name, 'LIVE')) {
+                sprintName = 'LIVE';
+            }
+            return sprintName;
+        }
+
+        function searchSprintIssues(sprint, f) {
+            var sprintName = getSprintName(sprint);
+            jira.searchJira('Sprint=' + sprint.id, options, function (err, searchResult) {
+                assert.equal(err, null);
+
+                searchResult.issues.forEach(function (issueDetail) {
+                    var formatedIssue = {
+                        id               : issueDetail.key,
+                        type             : issueDetail.fields.issuetype.name.toUpperCase(),
+                        timeSpent        : issueDetail.fields.timespent || 0,
+                        project          : issueDetail.fields.project.key,
+                        status           : issueDetail.fields.status.statusCategory.name.replace(' ', '_').toUpperCase(),
+                        originalEstimate : issueDetail.fields.aggregatetimeoriginalestimate || 0,
+                        remainingEstimate: issueDetail.fields.timeestimate,
+                        sprint           : sprintName
+                    };
+                    allIssues.push(formatedIssue);
+                });
+                f();
+            });
+        }
 
         jira.getSprintsForRapidView(4, function (err, sprints) {
             assert.equal(err, null);
 
-            sprints.forEach(function (sprint) {
+            sprints = _.compact(sprints.map(function(sprint) {
                 if (sprint.state == 'ACTIVE') {
-                    var sprintName = 'UNKNOWN';
-
-                    if (_.includes(sprint.name, 'DEV')) {
-                        sprintName = 'DEV';
-                    } else if (_.includes(sprint.name, 'UX')) {
-                        sprintName = 'UX';
-                    } else if (_.includes(sprint.name, 'LIVE')) {
-                        sprintName = 'LIVE';
-                    }
-                    assert.equal(err, null);
-
-                    jira.searchJira('Sprint=' + sprint.id, options, function (err, searchResult) {
-                        assert.equal(err, null);
-
-                        searchResult.issues.forEach(function (issueDetail) {
-                            var formatedIssue = {
-                                id               : issueDetail.key,
-                                type             : issueDetail.fields.issuetype.name.toUpperCase(),
-                                timeSpent        : issueDetail.fields.timespent || 0,
-                                project          : issueDetail.fields.project.key,
-                                status           : issueDetail.fields.status.statusCategory.name.replace(' ', '_').toUpperCase(),
-                                originalEstimate : issueDetail.fields.aggregatetimeoriginalestimate || 0,
-                                remainingEstimate: issueDetail.fields.timeestimate,
-                                sprint           : sprintName
-                            };
-                            allIssues.push(formatedIssue);
-                        });
-                    });
+                    return sprint;
                 }
-            });
+            }));
 
-            jira.getSprintsForRapidView(31, function (err, itSprints) {
-                itSprints.forEach(function (ITsprint) {
-                    if (ITsprint.state == 'ACTIVE') {
-                        jira.searchJira('Sprint=' + ITsprint.id, options, function (err, searchResult) {
-                            assert.equal(err, null);
-
-                            searchResult.issues.forEach(function (itIssueDetail) {
-                                var formatedIssue = {
-                                    id               : itIssueDetail.key,
-                                    type             : itIssueDetail.fields.issuetype.name.toUpperCase(),
-                                    timeSpent        : itIssueDetail.fields.timespent || 0,
-                                    project          : itIssueDetail.fields.project.key,
-                                    status           : itIssueDetail.fields.status.statusCategory.name.replace(' ', '_').toUpperCase(),
-                                    originalEstimate : itIssueDetail.fields.aggregatetimeoriginalestimate || 0,
-                                    remainingEstimate: itIssueDetail.fields.timeestimate,
-                                    sprint           : 'IT'
-                                };
-                                allIssues.push(formatedIssue);
+            async.map(sprints, function(sprint, f) {
+                searchSprintIssues(sprint, f);
+            }, function(err) {
+                jira.getSprintsForRapidView(31, function (err, itSprints) {
+                    itSprints.forEach(function (ITsprint) {
+                        if (ITsprint.state == 'ACTIVE') {
+                            async.map(sprints, function(sprint, f) {
+                                searchSprintIssues(sprint, f);
+                            }, function(err) {
+                                callback(err, allIssues);
                             });
-
-                            callback(err, allIssues);
-                        });
-                    }
+                        }
+                    });
                 });
             });
         });
